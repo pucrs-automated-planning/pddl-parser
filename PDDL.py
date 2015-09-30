@@ -38,12 +38,14 @@ class PDDL_Parser:
 
     def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
+        last_token = None
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.actions = []
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
+                last_token = t
                 if   t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
@@ -56,7 +58,7 @@ class PDDL_Parser:
                     self.parse_action(group)
                 else: print str(t) + ' is not recognized in domain'
         else:
-            raise 'File ' + domain_filename + ' does not match domain pattern'
+            raise 'Parse error in file ' + domain_filename + ' near token ' + last_token
 
     #-----------------------------------------------
     # Parse action
