@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# Four spaces as indentation [no tabs]
+
 import re
 from action import Action
 
@@ -9,7 +12,7 @@ class PDDL_Parser:
 
     def scan_tokens(self, str):
         # Remove single line comments
-        str = re.sub(r';.*\n', '', str).lower()
+        str = re.sub(r';.*$', '', str).lower()
         # Tokenize
         stack = []
         list = []
@@ -38,14 +41,12 @@ class PDDL_Parser:
 
     def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
-        last_token = None
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.actions = []
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
-                last_token = t
                 if   t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
@@ -56,9 +57,9 @@ class PDDL_Parser:
                     pass # TODO
                 elif t == ':action':
                     self.parse_action(group)
-                else: print str(t) + ' is not recognized in domain'
+                else: print(str(t) + ' is not recognized in domain')
         else:
-            raise 'Parse error in file ' + domain_filename + ' near token ' + last_token
+            raise 'File ' + domain_filename + ' does not match domain pattern'
 
     #-----------------------------------------------
     # Parse action
@@ -86,7 +87,7 @@ class PDDL_Parser:
                 self.split_propositions(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
                 self.split_propositions(group.pop(0), add_effects, del_effects, name, ' effects')
-            else: print str(t) + ' is not recognized in action'
+            else: print(str(t) + ' is not recognized in action')
         self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
 
     #-----------------------------------------------
@@ -119,7 +120,7 @@ class PDDL_Parser:
                     self.state = group
                 elif t == ':goal':
                     self.split_propositions(group[1], self.positive_goals, self.negative_goals, '', 'goals')
-                else: print str(t) + ' is not recognized in problem'
+                else: print(str(t) + ' is not recognized in problem')
 
     #-----------------------------------------------
     # Split propositions
@@ -153,19 +154,19 @@ if __name__ == '__main__':
         pddl_domain = f.read()
     with open(problem,'r') as f:
         pddl_problem = f.read()
-    print '----------------------------'
+    print('----------------------------')
     pprint.pprint(parser.scan_tokens(pddl_domain))
-    print '----------------------------'
+    print('----------------------------')
     pprint.pprint(parser.scan_tokens(pddl_problem))
-    print '----------------------------'
+    print('----------------------------')
     parser.parse_domain(pddl_domain)
     parser.parse_problem(pddl_problem)
-    print 'Domain name:' + parser.domain_name
+    print('Domain name:' + parser.domain_name)
     for act in parser.actions:
-        print act
-    print '----------------------------'
-    print 'Problem name: ' + parser.problem_name
-    print 'Objects: ' + str(parser.objects)
-    print 'State: ' + str(parser.state)
-    print 'Positive goals: ' + str(parser.positive_goals)
-    print 'Negative goals: ' + str(parser.negative_goals)
+        print(act)
+    print('----------------------------')
+    print('Problem name: ' + parser.problem_name)
+    print('Objects: ' + str(parser.objects))
+    print('State: ' + str(parser.state))
+    print('Positive goals: ' + str(parser.positive_goals))
+    print('Negative goals: ' + str(parser.negative_goals))

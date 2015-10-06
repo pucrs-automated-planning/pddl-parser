@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# Four spaces as indentation [no tabs]
+
 from PDDL import PDDL_Parser
 
 class Propositional_Planner:
@@ -78,6 +81,6 @@ if __name__ == '__main__':
     problem = sys.argv[2]
     planner = Propositional_Planner()
     plan = planner.solve(domain, problem)
-    print 'plan:'
+    print('plan:')
     for act in plan:
-        print act
+        print(act)
