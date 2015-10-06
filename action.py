@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# Four spaces as indentation [no tabs]
+
 class Action:
 
     def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, cost = 0):
@@ -17,3 +20,6 @@ class Action:
         '\n  add_effects: ' + str(self.add_effects) + \
         '\n  del_effects: ' + str(self.del_effects) + \
         '\n  cost: ' + str(self.cost) + '\n'
+
+    def __eq__(self, other): 
+        return self.__dict__ == other.__dict__
