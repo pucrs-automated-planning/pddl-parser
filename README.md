@@ -12,7 +12,7 @@ Propositional planning in Python
 ```Shell
 # Parser can be used separately
 cd Propositional
-python -B PDDL.py dinner\dinner.pddl dinner\pb1.pddl
+python -B PDDL.py dinner/dinner.pddl dinner/pb1.pddl
 # Output
 ----------------------------
 ['define',
@@ -104,7 +104,7 @@ Negative goals: [['garbage']]
 ```Shell
 # Planning using BFS
 cd Propositional
-python -B propositional_planner.py dinner\dinner.pddl dinner\pb1.pddl
+python -B propositional_planner.py dinner/dinner.pddl dinner/pb1.pddl
 # Output
 plan:
 action: cook
