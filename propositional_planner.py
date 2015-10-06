@@ -12,10 +12,8 @@ class Propositional_Planner:
     def solve(self, domain, problem):
         # Parser
         parser = PDDL_Parser()
-        with open(domain,'r') as f:
-            parser.parse_domain(f.read())
-        with open(problem,'r') as f:
-            parser.parse_problem(f.read())
+        parser.parse_domain(domain)
+        parser.parse_problem(problem)
         # Parsed data
         actions = parser.actions
         state = parser.state

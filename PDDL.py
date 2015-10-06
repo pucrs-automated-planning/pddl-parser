@@ -10,9 +10,10 @@ class PDDL_Parser:
     # Tokens
     # ------------------------------------------
 
-    def scan_tokens(self, str):
-        # Remove single line comments
-        str = re.sub(r';.*$', '', str).lower()
+    def scan_tokens(self, filename):
+        with open(filename,'r') as f:
+            # Remove single line comments
+            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
         # Tokenize
         stack = []
         list = []
@@ -150,17 +151,13 @@ if __name__ == '__main__':
     domain = sys.argv[1]
     problem = sys.argv[2]
     parser = PDDL_Parser()
-    with open(domain,'r') as f:
-        pddl_domain = f.read()
-    with open(problem,'r') as f:
-        pddl_problem = f.read()
     print('----------------------------')
-    pprint.pprint(parser.scan_tokens(pddl_domain))
+    pprint.pprint(parser.scan_tokens(domain))
     print('----------------------------')
-    pprint.pprint(parser.scan_tokens(pddl_problem))
+    pprint.pprint(parser.scan_tokens(problem))
     print('----------------------------')
-    parser.parse_domain(pddl_domain)
-    parser.parse_problem(pddl_problem)
+    parser.parse_domain(domain)
+    parser.parse_problem(problem)
     print('Domain name:' + parser.domain_name)
     for act in parser.actions:
         print(act)
