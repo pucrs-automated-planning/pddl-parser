@@ -6,10 +6,10 @@ from action import Action
 from propositional_planner import Propositional_Planner
 
 # ==========================================
-# Test PDDL
+# Test Propositional_Planner
 # ==========================================
 
-class Test_PDDL(unittest.TestCase):
+class Test_Propositional_Planner(unittest.TestCase):
 
     # ------------------------------------------
     # Test solve
