@@ -17,7 +17,7 @@ class PDDL_Parser:
         # Tokenize
         stack = []
         list = []
-        for t in re.findall(r'[()]|[!?:]*[\w-]+', str):
+        for t in re.findall(r'[()]|[^\s()]+', str):
             if t == '(':
                 stack.append(list)
                 list = []
