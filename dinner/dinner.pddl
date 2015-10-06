@@ -1,4 +1,5 @@
-(define (domain dinner)
+; This is a comment line
+(define (domain dinner) ; There is no block comment like
   (:requirements :strips)
   (:predicates
     (clean)
