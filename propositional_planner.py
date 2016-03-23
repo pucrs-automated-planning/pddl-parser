@@ -30,7 +30,7 @@ class Propositional_Planner:
             plan = fringe.pop(0)
             for act in actions:
                 if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
-                    new_state = self.apply(state, act)
+                    new_state = self.apply(state, act.add_effects, act.del_effects)
                     if new_state not in visited:
                         if self.applicable(new_state, goal_pos, goal_not):
                             full_plan = [act]
@@ -60,12 +60,12 @@ class Propositional_Planner:
     # Apply
     #-----------------------------------------------
 
-    def apply(self, state, act):
+    def apply(self, state, positive, negative):
         new_state = []
         for i in state:
-            if i not in act.del_effects:
+            if i not in negative:
                 new_state.append(i)
-        for i in act.add_effects:
+        for i in positive:
             if i not in new_state:
               new_state.append(i)
         return new_state
@@ -79,6 +79,9 @@ if __name__ == '__main__':
     problem = sys.argv[2]
     planner = Propositional_Planner()
     plan = planner.solve(domain, problem)
-    print('plan:')
-    for act in plan:
-        print(act)
+    if plan:
+        print('plan:')
+        for act in plan:
+            print(act)
+    else:
+        print('No plan was found')
