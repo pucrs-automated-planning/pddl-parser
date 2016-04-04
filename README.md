@@ -1,4 +1,4 @@
-# Propositional
+# Propositional [![Build Status](https://travis-ci.org/pucrs-automated-planning/pddl-parser.svg?branch=master)](https://travis-ci.org/pucrs-automated-planning/pddl-parser)
 Propositional planning in Python
 
 ## Source
