@@ -72,7 +72,7 @@ class PDDL_Parser:
             raise Exception('Action without name definition')
         for act in self.actions:
             if act.name == name:
-                raise Exception('Action ' + name + 'redefined')
+                raise Exception('Action ' + name + ' redefined')
         parameters = []
         positive_preconditions = []
         negative_preconditions = []
@@ -82,7 +82,7 @@ class PDDL_Parser:
             t = group.pop(0)
             if t == ':parameters':
                 if not type(group) is list:
-                    raise Exception('Error with '+ name + ' parameters')
+                    raise Exception('Error with ' + name + ' parameters')
                 parameters = group.pop(0)
             elif t == ':precondition':
                 self.split_propositions(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
@@ -129,7 +129,7 @@ class PDDL_Parser:
 
     def split_propositions(self, group, pos, neg, name, part):
         if not type(group) is list:
-            raise Exception('Error with '+ name + part)
+            raise Exception('Error with ' + name + part)
         if group[0] == 'and':
             group.pop(0)
         else:
@@ -137,7 +137,7 @@ class PDDL_Parser:
         for proposition in group:
             if proposition[0] == 'not':
                 if len(proposition) != 2:
-                    raise Exception('Error with ' + name + ' negative' + part)
+                    raise Exception('Unexpected not in ' + name + part)
                 neg.append(proposition[-1])
             else:
                 pos.append(proposition)
