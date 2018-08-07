@@ -1,5 +1,5 @@
-# Propositional [![Build Status](https://travis-ci.org/pucrs-automated-planning/pddl-parser.svg?branch=master)](https://travis-ci.org/pucrs-automated-planning/pddl-parser) [![DOI](https://zenodo.org/badge/42985356.svg)](https://zenodo.org/badge/latestdoi/42985356)
-Propositional planning in Python
+# PDDL Parser [![Build Status](https://travis-ci.org/pucrs-automated-planning/pddl-parser.svg?branch=master)](https://travis-ci.org/pucrs-automated-planning/pddl-parser) [![DOI](https://zenodo.org/badge/42985356.svg)](https://zenodo.org/badge/latestdoi/42985356)
+**Propositional planning in Python**
 
 ## Source
 - [action.py](action.py) with an Action structure.
@@ -8,7 +8,6 @@ Propositional planning in Python
 - [dinner](dinner) folder with a PDDL example from Daniel Weld, the Dinner domain.
 
 ## Parser execution
-
 ```Shell
 # Parser can be used separately
 cd Propositional
@@ -99,8 +98,7 @@ Positive goals: [['dinner'], ['present']]
 Negative goals: [['garbage']]
 ```
 
-# Planner execution
-
+## Planner execution
 ```Shell
 # Planning using BFS
 cd Propositional
