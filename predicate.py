@@ -4,7 +4,6 @@ class Predicate:
         self.name = name
         self.arguments = arguments
 
-
     def __str__(self):
         return 'predicate: ' + self.name + \
         '\n  arguments: ' + str(self.arguments)
