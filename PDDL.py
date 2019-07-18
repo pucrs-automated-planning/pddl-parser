@@ -3,6 +3,7 @@
 
 import re
 from action import Action
+from predicate import Predicate
 
 class PDDL_Parser:
 
@@ -45,6 +46,8 @@ class PDDL_Parser:
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.actions = []
+            self.predicates = []
+
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
@@ -53,6 +56,7 @@ class PDDL_Parser:
                 elif t == ':requirements':
                     pass # TODO
                 elif t == ':predicates':
+                    self.parse_predicates(group)
                     pass # TODO
                 elif t == ':types':
                     pass # TODO
@@ -61,6 +65,33 @@ class PDDL_Parser:
                 else: print(str(t) + ' is not recognized in domain')
         else:
             raise 'File ' + domain_filename + ' does not match domain pattern'
+
+    #-----------------------------------------------
+    # Parse predicates
+    #-----------------------------------------------
+    def parse_predicates(self, group):
+        for pred in group:
+            pred = group.pop(0)
+            predicate_name = pred.pop(0)
+            for old_pred in self.predicates:
+                if old_pred.name == predicate_name:
+                    raise Exception('Predicate ' + predicate_name + ' redefined')
+            arguments = {}
+
+            try:
+                ind = pred.index("-")
+                while ind > 0:
+                    var_names = pred[:ind]
+                    var_type = pred[ind+1]
+                    for v in var_names:
+                        arguments[v] = var_type
+                    print 
+                    pred = pred[ind + 2:]
+                    ind = pred.index("-")
+            except ValueError as e:
+                pass
+            p = Predicate(name=predicate_name, arguments=arguments)
+            self.predicates.append(Predicate(name=predicate_name, arguments=arguments))
 
     #-----------------------------------------------
     # Parse action
