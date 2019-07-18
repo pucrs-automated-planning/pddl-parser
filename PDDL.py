@@ -57,7 +57,6 @@ class PDDL_Parser:
                     pass # TODO
                 elif t == ':predicates':
                     self.parse_predicates(group)
-                    pass # TODO
                 elif t == ':types':
                     pass # TODO
                 elif t == ':action':
