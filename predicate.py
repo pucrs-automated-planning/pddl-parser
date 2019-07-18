@@ -6,7 +6,7 @@ class Predicate:
 
 
     def __str__(self):
-        return 'action: ' + self.name + \
+        return 'predicate: ' + self.name + \
         '\n  arguments: ' + str(self.arguments)
 
     def __eq__(self, other): 
