@@ -70,7 +70,6 @@ class PDDL_Parser:
     #-----------------------------------------------
     def parse_predicates(self, group):
         for pred in group:
-            pred = group.pop(0)
             predicate_name = pred.pop(0)
             for old_pred in self.predicates:
                 if old_pred.name == predicate_name:
