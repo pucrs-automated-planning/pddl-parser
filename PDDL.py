@@ -83,7 +83,6 @@ class PDDL_Parser:
                     var_type = pred[ind+1]
                     for v in var_names:
                         arguments[v] = var_type
-                    print 
                     pred = pred[ind + 2:]
                     ind = pred.index("-")
             except ValueError as e:
