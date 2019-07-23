@@ -6,6 +6,8 @@ from action import Action
 
 class PDDL_Parser:
 
+    SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
+
     # ------------------------------------------
     # Tokens
     # ------------------------------------------
@@ -53,8 +55,10 @@ class PDDL_Parser:
                 if   t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
-                    self.requirements = group[0]
-                    # TODO raise exception for unknown requirements
+                    for req in group:
+                        if not req in self.SUPPORTED_REQUIREMENTS:
+                            raise Exception('Requirement ' + req + ' not supported')
+                    self.requirements = group
                 elif t == ':predicates':
                     pass # TODO
                 elif t == ':types':
