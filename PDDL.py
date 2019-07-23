@@ -44,6 +44,7 @@ class PDDL_Parser:
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
+            self.requirements = []
             self.actions = []
             while tokens:
                 group = tokens.pop(0)
@@ -51,7 +52,8 @@ class PDDL_Parser:
                 if   t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
-                    pass # TODO
+                    self.requirements = group[0]
+                    # TODO raise exception for unknown requirements
                 elif t == ':predicates':
                     pass # TODO
                 elif t == ':types':
