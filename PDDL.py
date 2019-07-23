@@ -58,7 +58,7 @@ class PDDL_Parser:
                 elif t == ':predicates':
                     pass # TODO
                 elif t == ':types':
-                    self.types = group[0]
+                    self.types = group
                 elif t == ':action':
                     self.parse_action(group)
                 else: print(str(t) + ' is not recognized in domain')

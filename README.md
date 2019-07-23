@@ -88,7 +88,7 @@ action: dolly
 
 ----------------------------
 Problem name: pb1
-Objects: []
+Objects: {}
 State: [['garbage'], ['clean'], ['quiet']]
 Positive goals: [['dinner'], ['present']]
 Negative goals: [['garbage']]
