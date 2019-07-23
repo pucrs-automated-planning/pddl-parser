@@ -1,16 +1,16 @@
 # PDDL Parser [![Build Status](https://travis-ci.org/pucrs-automated-planning/pddl-parser.svg?branch=master)](https://travis-ci.org/pucrs-automated-planning/pddl-parser) [![DOI](https://zenodo.org/badge/42985356.svg)](https://zenodo.org/badge/latestdoi/42985356)
-**Propositional planning in Python**
+**planning in Python**
 
 ## Source
 - [action.py](action.py) with an Action structure.
 - [PDDL.py](PDDL.py) with a PDDL parser.
-- [propositional_planner.py](propositional_planner.py) with a planner.
+- [planner.py](planner.py) with a planner.
 - [dinner](dinner) folder with a PDDL example from Daniel Weld, the Dinner domain.
 
 ## Parser execution
 ```Shell
 # Parser can be used separately
-cd Propositional
+cd pddl-parser
 python -B PDDL.py dinner/dinner.pddl dinner/pb1.pddl
 # Output
 ----------------------------
@@ -57,7 +57,7 @@ python -B PDDL.py dinner/dinner.pddl dinner/pb1.pddl
  [':init', ['garbage'], ['clean'], ['quiet']],
  [':goal', ['and', ['dinner'], ['present'], ['not', ['garbage']]]]]
 ----------------------------
-Domain name:dinner
+Domain name: dinner
 action: cook
   parameters: []
   positive_preconditions: [['clean']]
@@ -97,8 +97,8 @@ Negative goals: [['garbage']]
 ## Planner execution
 ```Shell
 # Planning using BFS
-cd Propositional
-python -B propositional_planner.py dinner/dinner.pddl dinner/pb1.pddl
+cd pddl-parser
+python -B planner.py dinner/dinner.pddl dinner/pb1.pddl
 # Output
 plan:
 action: cook

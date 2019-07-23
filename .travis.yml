@@ -4,4 +4,4 @@ python:
 script:
   # Tests
   - python test_PDDL.py
-  - python test_propositional_planner.py
+  - python test_planner.py

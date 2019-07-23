@@ -3,20 +3,20 @@
 
 import unittest
 from action import Action
-from propositional_planner import Propositional_Planner
+from planner import Planner
 
 # ==========================================
-# Test Propositional_Planner
+# Test Planner
 # ==========================================
 
-class Test_Propositional_Planner(unittest.TestCase):
+class Test_Planner(unittest.TestCase):
 
     # ------------------------------------------
     # Test solve
     # ------------------------------------------
 
     def test_solve_dinner(self):
-        planner = Propositional_Planner()
+        planner = Planner()
         self.assertEqual(planner.solve('dinner/dinner.pddl', 'dinner/pb1.pddl'),
             [
                 Action('cook', [], [['clean']], [], [['dinner']], []),

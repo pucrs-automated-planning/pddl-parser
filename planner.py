@@ -3,7 +3,7 @@
 
 from PDDL import PDDL_Parser
 
-class Propositional_Planner:
+class Planner:
 
     #-----------------------------------------------
     # Solve
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     import sys
     domain = sys.argv[1]
     problem = sys.argv[2]
-    planner = Propositional_Planner()
+    planner = Planner()
     plan = planner.solve(domain, problem)
     if plan:
         print('plan:')

@@ -87,9 +87,9 @@ class PDDL_Parser:
                     raise Exception('Error with ' + name + ' parameters')
                 parameters = group.pop(0)
             elif t == ':precondition':
-                self.split_propositions(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
+                self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
-                self.split_propositions(group.pop(0), add_effects, del_effects, name, ' effects')
+                self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
             else: print(str(t) + ' is not recognized in action')
         self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
 
@@ -122,27 +122,27 @@ class PDDL_Parser:
                     group.pop(0)
                     self.state = group
                 elif t == ':goal':
-                    self.split_propositions(group[1], self.positive_goals, self.negative_goals, '', 'goals')
+                    self.split_predicates(group[1], self.positive_goals, self.negative_goals, '', 'goals')
                 else: print(str(t) + ' is not recognized in problem')
 
     #-----------------------------------------------
-    # Split propositions
+    # Split predicates
     #-----------------------------------------------
 
-    def split_propositions(self, group, pos, neg, name, part):
+    def split_predicates(self, group, pos, neg, name, part):
         if not type(group) is list:
             raise Exception('Error with ' + name + part)
         if group[0] == 'and':
             group.pop(0)
         else:
             group = [group]
-        for proposition in group:
-            if proposition[0] == 'not':
-                if len(proposition) != 2:
+        for predicate in group:
+            if predicate[0] == 'not':
+                if len(predicate) != 2:
                     raise Exception('Unexpected not in ' + name + part)
-                neg.append(proposition[-1])
+                neg.append(predicate[-1])
             else:
-                pos.append(proposition)
+                pos.append(predicate)
 
 # ==========================================
 # Main
@@ -160,7 +160,7 @@ if __name__ == '__main__':
     print('----------------------------')
     parser.parse_domain(domain)
     parser.parse_problem(problem)
-    print('Domain name:' + parser.domain_name)
+    print('Domain name: ' + parser.domain_name)
     for act in parser.actions:
         print(act)
     print('----------------------------')
