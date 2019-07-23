@@ -64,7 +64,6 @@ action: cook
   negative_preconditions: []
   add_effects: [['dinner']]
   del_effects: []
-  cost: 0
 
 action: wrap
   parameters: []
@@ -72,7 +71,6 @@ action: wrap
   negative_preconditions: []
   add_effects: [['present']]
   del_effects: []
-  cost: 0
 
 action: carry
   parameters: []
@@ -80,7 +78,6 @@ action: carry
   negative_preconditions: []
   add_effects: []
   del_effects: [['garbage'], ['clean']]
-  cost: 0
 
 action: dolly
   parameters: []
@@ -88,7 +85,6 @@ action: dolly
   negative_preconditions: []
   add_effects: []
   del_effects: [['garbage'], ['quiet']]
-  cost: 0
 
 ----------------------------
 Problem name: pb1
@@ -111,7 +107,6 @@ action: cook
   negative_preconditions: []
   add_effects: [['dinner']]
   del_effects: []
-  cost: 0
 
 action: wrap
   parameters: []
@@ -119,7 +114,6 @@ action: wrap
   negative_preconditions: []
   add_effects: [['present']]
   del_effects: []
-  cost: 0
 
 action: carry
   parameters: []
@@ -127,5 +121,4 @@ action: carry
   negative_preconditions: []
   add_effects: []
   del_effects: [['garbage'], ['clean']]
-  cost: 0
 ```
