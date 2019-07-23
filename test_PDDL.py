@@ -74,7 +74,7 @@ class Test_PDDL(unittest.TestCase):
         parser.parse_domain('dinner/dinner.pddl')
         parser.parse_problem('dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
-        self.assertEqual(parser.objects, [])
+        self.assertEqual(parser.objects, {})
         self.assertEqual(parser.state, [['garbage'],['clean'],['quiet']])
         self.assertEqual(parser.positive_goals, [['dinner'], ['present']])
         self.assertEqual(parser.negative_goals, [['garbage']])

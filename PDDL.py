@@ -45,6 +45,7 @@ class PDDL_Parser:
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.requirements = []
+            self.types = []
             self.actions = []
             while tokens:
                 group = tokens.pop(0)
@@ -57,7 +58,7 @@ class PDDL_Parser:
                 elif t == ':predicates':
                     pass # TODO
                 elif t == ':types':
-                    pass # TODO
+                    self.types = group[0]
                 elif t == ':action':
                     self.parse_action(group)
                 else: print(str(t) + ' is not recognized in domain')
@@ -85,7 +86,15 @@ class PDDL_Parser:
             if t == ':parameters':
                 if not type(group) is list:
                     raise Exception('Error with ' + name + ' parameters')
-                parameters = group.pop(0)
+                parameters = []
+                p = group.pop(0)
+                while p:
+                    variable = p.pop(0)
+                    if p and p[0] == '-':
+                        p.pop(0)
+                        parameters.append([variable, p.pop(0)])
+                    else:
+                        parameters.append([variable, 'object'])
             elif t == ':precondition':
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
@@ -101,7 +110,7 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = []
+            self.objects = dict()
             self.state = []
             self.positive_goals = []
             self.negative_goals = []
@@ -117,7 +126,18 @@ class PDDL_Parser:
                     pass # Ignore requirements in problem, parse them in the domain
                 elif t == ':objects':
                     group.pop(0)
-                    self.objects = group
+                    object_list = []
+                    while group:
+                        if group[0] == '-':
+                            group.pop(0)
+                            self.objects[group.pop(0)] = object_list
+                            object_list = []
+                        else:
+                            object_list.append(group.pop(0))
+                    if object_list:
+                        if not 'object' in self.objects:
+                            self.objects['object'] = []
+                        self.objects['object'] += object_list
                 elif t == ':init':
                     group.pop(0)
                     self.state = group
