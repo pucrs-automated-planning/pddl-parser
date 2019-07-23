@@ -114,7 +114,7 @@ class PDDL_Parser:
                     if self.domain_name != group[-1]:
                         raise Exception('Different domain specified in problem file')
                 elif t == ':requirements':
-                    pass # TODO
+                    pass # Ignore requirements in problem, parse them in the domain
                 elif t == ':objects':
                     group.pop(0)
                     self.objects = group
