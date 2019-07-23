@@ -25,9 +25,5 @@ class Test_Propositional_Planner(unittest.TestCase):
             ]
         )
 
-    #-------------------------------------------
-    # Split propositions
-    #-------------------------------------------
-
 if __name__ == '__main__':
     unittest.main()
