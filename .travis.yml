@@ -8,3 +8,7 @@ script:
   # Tests
   - python test_PDDL.py
   - python test_planner.py
+  # Examples
+  - python action.py
+  - python PDDL.py    dinner/dinner.pddl dinner/pb1.pddl
+  - python planner.py dinner/dinner.pddl dinner/pb1.pddl
