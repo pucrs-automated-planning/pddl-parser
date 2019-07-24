@@ -43,14 +43,13 @@ class Action:
     def replace(self, group, variables, assignment):
         g = []
         for pred in group:
-            a = pred
+            pred = list(pred)
             iv = 0
             for v in variables:
-                while v in a:
-                    i = a.index(v)
-                    a = a[:i] + [assignment[iv]] + a[i+1:]
+                while v in pred:
+                    pred[pred.index(v)] = assignment[iv]
                 iv += 1
-            g.append(a)
+            g.append(pred)
         return g
 
 if __name__ == '__main__':
