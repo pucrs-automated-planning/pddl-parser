@@ -3,7 +3,6 @@
 
 import re
 from action import Action
-from predicate import Predicate
 
 class PDDL_Parser:
 
@@ -50,8 +49,7 @@ class PDDL_Parser:
             self.requirements = []
             self.types = []
             self.actions = []
-            self.predicates = []
-
+            self.predicates = {}
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
@@ -75,27 +73,27 @@ class PDDL_Parser:
     #-----------------------------------------------
     # Parse predicates
     #-----------------------------------------------
+
     def parse_predicates(self, group):
         for pred in group:
             predicate_name = pred.pop(0)
-            for old_pred in self.predicates:
-                if old_pred.name == predicate_name:
-                    raise Exception('Predicate ' + predicate_name + ' redefined')
+            if predicate_name in self.predicates:
+                raise Exception('Predicate ' + predicate_name + ' redefined')
             arguments = {}
-
-            try:
-                ind = pred.index("-")
-                while ind > 0:
-                    var_names = pred[:ind]
-                    var_type = pred[ind+1]
-                    for v in var_names:
-                        arguments[v] = var_type
-                    pred = pred[ind + 2:]
-                    ind = pred.index("-")
-            except ValueError as e:
-                pass
-            p = Predicate(name=predicate_name, arguments=arguments)
-            self.predicates.append(Predicate(name=predicate_name, arguments=arguments))
+            untyped_variables = []
+            while pred:
+                t = pred.pop(0)
+                if t == '-':
+                    if not untyped_variables:
+                        raise Exception('Unexpected hyphen in predicates')
+                    type = pred.pop(0)
+                    while untyped_variables:
+                        arguments[untyped_variables.pop(0)] = type
+                else:
+                    untyped_variables.append(t)
+            while untyped_variables:
+                arguments[untyped_variables.pop(0)] = 'object'
+            self.predicates[predicate_name] = arguments
 
     #-----------------------------------------------
     # Parse action

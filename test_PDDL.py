@@ -82,8 +82,22 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.negative_goals, [['garbage']])
 
     #-------------------------------------------
-    # Split propositions
+    # Test parse predicates
     #-------------------------------------------
+
+    def test_parse_predicates(self):
+        parser = PDDL_Parser()
+        parser.predicates = {}
+        parser.parse_predicates([
+          ['untyped_pred', '?v1', '?v2', '?v3'],
+          ['typed_pred', '?v1', '-', 'type1', '?v2', '-', 'type1', '?v3', '-', 'object'],
+          ['shared_type_pred', '?v1', '?v2', '-', 'type1', '?v3']
+        ])
+        self.assertEqual(parser.predicates, {
+          'untyped_pred': {'?v1': 'object', '?v2': 'object', '?v3': 'object'},
+          'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
+          'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
+        })
 
 if __name__ == '__main__':
     unittest.main()
