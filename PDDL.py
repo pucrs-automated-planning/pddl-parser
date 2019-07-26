@@ -68,7 +68,7 @@ class PDDL_Parser:
                     self.parse_action(group)
                 else: print(str(t) + ' is not recognized in domain')
         else:
-            raise 'File ' + domain_filename + ' does not match domain pattern'
+            raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
     #-----------------------------------------------
     # Parse predicates
@@ -174,6 +174,8 @@ class PDDL_Parser:
                 elif t == ':goal':
                     self.split_predicates(group[1], self.positive_goals, self.negative_goals, '', 'goals')
                 else: print(str(t) + ' is not recognized in problem')
+        else:
+            raise Exception('File ' + problem_filename + ' does not match problem pattern')
 
     #-----------------------------------------------
     # Split predicates
