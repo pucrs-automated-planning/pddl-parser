@@ -117,14 +117,20 @@ class PDDL_Parser:
                 if not type(group) is list:
                     raise Exception('Error with ' + name + ' parameters')
                 parameters = []
+                untyped_parameters = []
                 p = group.pop(0)
                 while p:
-                    variable = p.pop(0)
-                    if p and p[0] == '-':
-                        p.pop(0)
-                        parameters.append([variable, p.pop(0)])
+                    t = p.pop(0)
+                    if t == '-':
+                        if not untyped_parameters:
+                            raise Exception('Unexpected hyphen in predicates')
+                        ptype = p.pop(0)
+                        while untyped_parameters:
+                            parameters.append([untyped_parameters.pop(0), ptype])
                     else:
-                        parameters.append([variable, 'object'])
+                        untyped_parameters.append(t)
+                while untyped_parameters:
+                    parameters.append([untyped_parameters.pop(0), 'object'])
             elif t == ':precondition':
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
