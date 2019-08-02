@@ -57,6 +57,7 @@ class Test_PDDL(unittest.TestCase):
         parser.parse_domain('dinner/dinner.pddl')
         self.assertEqual(parser.domain_name, 'dinner')
         self.assertEqual(parser.requirements, [':strips'])
+        self.assertEqual(parser.predicates, {'clean': {}, 'dinner': {}, 'quiet': {}, 'present': {}, 'garbage': {}})
         self.assertEqual(parser.types, [])
         self.assertEqual(parser.actions,
             [
