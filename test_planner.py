@@ -17,7 +17,7 @@ class Test_Planner(unittest.TestCase):
 
     def test_solve_dinner(self):
         planner = Planner()
-        self.assertEqual(planner.solve('dinner/dinner.pddl', 'dinner/pb1.pddl'),
+        self.assertEqual(planner.solve('examples/dinner/dinner.pddl', 'examples/dinner/pb1.pddl'),
             [
                 Action('cook', [], [['clean']], [], [['dinner']], []),
                 Action('wrap', [], [['quiet']], [], [['present']], []),

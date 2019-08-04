@@ -17,31 +17,27 @@ class Test_PDDL(unittest.TestCase):
 
     def test_scan_tokens_domain(self):
         parser = PDDL_Parser()
-        self.assertEqual(parser.scan_tokens('dinner/dinner.pddl'),
+        self.assertEqual(parser.scan_tokens('examples/dinner/dinner.pddl'),
             ['define', ['domain', 'dinner'],
             [':requirements', ':strips'],
             [':predicates', ['clean'], ['dinner'], ['quiet'], ['present'], ['garbage']],
             [':action', 'cook',
-                ':parameters', [],
-                ':precondition', ['and', ['clean']],
-                ':effect', ['and', ['dinner']]],
+                ':precondition', ['clean'],
+                ':effect', ['dinner']],
             [':action', 'wrap',
-                ':parameters', [],
-                ':precondition', ['and', ['quiet']],
-                ':effect', ['and', ['present']]],
+                ':precondition', ['quiet'],
+                ':effect', ['present']],
             [':action', 'carry',
-                ':parameters', [],
-                ':precondition', ['and', ['garbage']],
+                ':precondition', ['garbage'],
                 ':effect', ['and', ['not', ['garbage']], ['not', ['clean']]]],
             [':action', 'dolly',
-                ':parameters', [],
-                ':precondition', ['and', ['garbage']],
+                ':precondition', ['garbage'],
                 ':effect', ['and', ['not', ['garbage']], ['not', ['quiet']]]]]
         )
 
     def test_scan_tokens_problem(self):
         parser = PDDL_Parser()
-        self.assertEqual(parser.scan_tokens('dinner/pb1.pddl'),
+        self.assertEqual(parser.scan_tokens('examples/dinner/pb1.pddl'),
             ['define', ['problem', 'pb1'],
             [':domain', 'dinner'],
             [':init', ['garbage'], ['clean'], ['quiet']],
@@ -54,7 +50,7 @@ class Test_PDDL(unittest.TestCase):
 
     def test_parse_domain(self):
         parser = PDDL_Parser()
-        parser.parse_domain('dinner/dinner.pddl')
+        parser.parse_domain('examples/dinner/dinner.pddl')
         self.assertEqual(parser.domain_name, 'dinner')
         self.assertEqual(parser.requirements, [':strips'])
         self.assertEqual(parser.predicates, {'clean': {}, 'dinner': {}, 'quiet': {}, 'present': {}, 'garbage': {}})
@@ -74,8 +70,8 @@ class Test_PDDL(unittest.TestCase):
 
     def test_parse_problem(self):
         parser = PDDL_Parser()
-        parser.parse_domain('dinner/dinner.pddl')
-        parser.parse_problem('dinner/pb1.pddl')
+        parser.parse_domain('examples/dinner/dinner.pddl')
+        parser.parse_problem('examples/dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
         self.assertEqual(parser.objects, {})
         self.assertEqual(parser.state, [['garbage'],['clean'],['quiet']])

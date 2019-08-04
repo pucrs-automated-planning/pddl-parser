@@ -10,5 +10,5 @@ script:
   - python test_planner.py
   # Examples
   - python action.py
-  - python PDDL.py    dinner/dinner.pddl dinner/pb1.pddl
-  - python planner.py dinner/dinner.pddl dinner/pb1.pddl
+  - python PDDL.py    examples/dinner/dinner.pddl dinner/pb1.pddl
+  - python planner.py examples/dinner/dinner.pddl dinner/pb1.pddl
