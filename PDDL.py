@@ -123,7 +123,7 @@ class PDDL_Parser:
                     t = p.pop(0)
                     if t == '-':
                         if not untyped_parameters:
-                            raise Exception('Unexpected hyphen in predicates')
+                            raise Exception('Unexpected hyphen in ' + name + ' parameters')
                         ptype = p.pop(0)
                         while untyped_parameters:
                             parameters.append([untyped_parameters.pop(0), ptype])
