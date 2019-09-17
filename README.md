@@ -5,7 +5,7 @@
 - [action.py](action.py) with an Action class
 - [PDDL.py](PDDL.py) with a PDDL parser
 - [planner.py](planner.py) with a planner
-- [examples] folder with PDDL domains:
+- [examples](examples/) folder with PDDL domains:
   - [Dinner](examples/dinner) from Daniel Weld, a propositional domain
   - [Blocks World](examples/blocksworld)
   - [Dock Worker Robot](examples/dwr)
