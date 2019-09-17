@@ -206,8 +206,7 @@ class PDDL_Parser:
 # Main
 # ==========================================
 if __name__ == '__main__':
-    import sys
-    import pprint
+    import sys, pprint
     domain = sys.argv[1]
     problem = sys.argv[2]
     parser = PDDL_Parser()

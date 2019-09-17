@@ -86,6 +86,7 @@ Negative goals: [['garbage']]
 cd pddl-parser
 python -B planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
 # Output
+Time: 0.00200009346008s
 plan:
 action: cook
   parameters: []

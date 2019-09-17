@@ -78,11 +78,13 @@ class Planner:
 # Main
 # ==========================================
 if __name__ == '__main__':
-    import sys
+    import sys, time
+    start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
     planner = Planner()
     plan = planner.solve(domain, problem)
+    print('Time: ' + str(time.time() - start_time) + 's')
     if plan:
         print('plan:')
         for act in plan:
