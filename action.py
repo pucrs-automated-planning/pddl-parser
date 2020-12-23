@@ -5,6 +5,10 @@ import itertools
 
 class Action:
 
+    #-----------------------------------------------
+    # Initialize
+    #-----------------------------------------------
+
     def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
         self.name = name
         self.parameters = parameters
@@ -12,6 +16,10 @@ class Action:
         self.negative_preconditions = negative_preconditions
         self.add_effects = add_effects
         self.del_effects = del_effects
+
+    #-----------------------------------------------
+    # to String
+    #-----------------------------------------------
 
     def __str__(self):
         return 'action: ' + self.name + \
@@ -21,9 +29,16 @@ class Action:
         '\n  add_effects: ' + str(self.add_effects) + \
         '\n  del_effects: ' + str(self.del_effects) + '\n'
 
+    #-----------------------------------------------
+    # Equality
+    #-----------------------------------------------
+
     def __eq__(self, other): 
         return self.__dict__ == other.__dict__
 
+    #-----------------------------------------------
+    # Groundify
+    #-----------------------------------------------
     def groundify(self, objects, types):
         if not self.parameters:
             yield self
@@ -40,7 +55,7 @@ class Action:
                 elif types.get(t):
                     type_stack.extend(types[t])
                 else:
-                    raise Exception('Unrecognized type {0}'.format(t))
+                    raise Exception('Unrecognized type ' + t)
             type_map.append(items)
             variables.append(var)
         for assignment in itertools.product(*type_map):
@@ -49,6 +64,10 @@ class Action:
             add_effects = self.replace(self.add_effects, variables, assignment)
             del_effects = self.replace(self.del_effects, variables, assignment)
             yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects)
+
+    #-----------------------------------------------
+    # Replace
+    #-----------------------------------------------
 
     def replace(self, group, variables, assignment):
         g = []
@@ -62,6 +81,9 @@ class Action:
             g.append(pred)
         return g
 
+#-----------------------------------------------
+# Main
+#-----------------------------------------------
 if __name__ == '__main__':
     a = Action('move', [['?ag', 'agent'], ['?from', 'pos'], ['?to', 'pos']],
         [['at', '?ag', '?from'], ['adjacent', '?from', '?to']],

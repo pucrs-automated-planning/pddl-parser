@@ -10,9 +10,9 @@ class PDDL_Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Tokens
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def scan_tokens(self, filename):
         with open(filename,'r') as f:
@@ -105,7 +105,7 @@ class PDDL_Parser:
         while types:
             t = types.pop(0)
             if self.types.get(t):
-                raise Exception('Type ' + t + ' redefined')
+                raise Exception('Redefined supertype of ' + t)
             elif t == '-':
                 if not untyped_names:
                     raise Exception('Unexpected hyphen in types')
@@ -224,10 +224,9 @@ class PDDL_Parser:
             else:
                 pos.append(predicate)
 
-
-# ==========================================
+#-----------------------------------------------
 # Main
-# ==========================================
+#-----------------------------------------------
 if __name__ == '__main__':
     import sys, pprint
     domain = sys.argv[1]
