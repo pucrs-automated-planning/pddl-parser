@@ -4,6 +4,11 @@ python:
   - 2.7
   - 3.6
   - 3.7
+  - 3.8
+  - 3.9
+matrix:
+  allow_failures:
+  - python: 2.7
 script:
   # Tests
   - python test_PDDL.py
