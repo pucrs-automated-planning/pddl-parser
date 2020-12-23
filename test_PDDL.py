@@ -5,15 +5,11 @@ import unittest
 from action import Action
 from PDDL import PDDL_Parser
 
-# ==========================================
-# Test PDDL
-# ==========================================
-
 class Test_PDDL(unittest.TestCase):
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Test scan_tokens
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def test_scan_tokens_domain(self):
         parser = PDDL_Parser()
@@ -44,9 +40,9 @@ class Test_PDDL(unittest.TestCase):
             [':goal', ['and', ['dinner'], ['present'], ['not', ['garbage']]]]]
         )
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Test parse domain
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def test_parse_domain(self):
         parser = PDDL_Parser()
@@ -64,9 +60,9 @@ class Test_PDDL(unittest.TestCase):
             ]
         )
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Test parse problem
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def test_parse_problem(self):
         parser = PDDL_Parser()
@@ -78,9 +74,9 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.positive_goals, [['dinner'], ['present']])
         self.assertEqual(parser.negative_goals, [['garbage']])
 
-    #-------------------------------------------
+    #-----------------------------------------------
     # Test parse predicates
-    #-------------------------------------------
+    #-----------------------------------------------
 
     def test_parse_predicates(self):
         parser = PDDL_Parser()
@@ -96,5 +92,8 @@ class Test_PDDL(unittest.TestCase):
           'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
         })
 
+#-----------------------------------------------
+# Main
+#-----------------------------------------------
 if __name__ == '__main__':
     unittest.main()

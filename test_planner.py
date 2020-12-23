@@ -5,15 +5,11 @@ import unittest
 from action import Action
 from planner import Planner
 
-# ==========================================
-# Test Planner
-# ==========================================
-
 class Test_Planner(unittest.TestCase):
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Test solve
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def test_solve_dinner(self):
         planner = Planner()
@@ -25,5 +21,8 @@ class Test_Planner(unittest.TestCase):
             ]
         )
 
+#-----------------------------------------------
+# Main
+#-----------------------------------------------
 if __name__ == '__main__':
     unittest.main()

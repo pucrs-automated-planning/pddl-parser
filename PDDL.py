@@ -8,9 +8,9 @@ class PDDL_Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
-    # ------------------------------------------
+    #-----------------------------------------------
     # Tokens
-    # ------------------------------------------
+    #-----------------------------------------------
 
     def scan_tokens(self, filename):
         with open(filename,'r') as f:
@@ -202,9 +202,9 @@ class PDDL_Parser:
             else:
                 pos.append(predicate)
 
-# ==========================================
+#-----------------------------------------------
 # Main
-# ==========================================
+#-----------------------------------------------
 if __name__ == '__main__':
     import sys, pprint
     domain = sys.argv[1]
