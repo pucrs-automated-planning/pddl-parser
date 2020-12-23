@@ -10,12 +10,14 @@ class Action:
     #-----------------------------------------------
 
     def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         self.name = name
         self.parameters = parameters
-        self.positive_preconditions = positive_preconditions
-        self.negative_preconditions = negative_preconditions
-        self.add_effects = add_effects
-        self.del_effects = del_effects
+        self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
+        self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
+        self.add_effects = frozenset_of_tuples(add_effects)
+        self.del_effects = frozenset_of_tuples(del_effects)
 
     #-----------------------------------------------
     # to String
@@ -24,10 +26,10 @@ class Action:
     def __str__(self):
         return 'action: ' + self.name + \
         '\n  parameters: ' + str(self.parameters) + \
-        '\n  positive_preconditions: ' + str(self.positive_preconditions) + \
-        '\n  negative_preconditions: ' + str(self.negative_preconditions) + \
-        '\n  add_effects: ' + str(self.add_effects) + \
-        '\n  del_effects: ' + str(self.del_effects) + '\n'
+        '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
+        '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
+        '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
+        '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
 
     #-----------------------------------------------
     # Equality
