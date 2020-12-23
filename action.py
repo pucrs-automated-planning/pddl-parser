@@ -97,5 +97,6 @@ if __name__ == '__main__':
         'agent': ['ana','bob'],
         'pos': ['p1','p2']
     }
-    for act in a.groundify(objects):
+    types = {'object': ['agent', 'pos']}
+    for act in a.groundify(objects, types):
         print(act)
