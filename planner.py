@@ -59,7 +59,7 @@ class Planner:
     #-----------------------------------------------
 
     def apply(self, state, positive, negative):
-        return frozenset(state.difference(negative).union(positive))
+        return state.difference(negative).union(positive)
 
 #-----------------------------------------------
 # Main
