@@ -52,27 +52,14 @@ class Planner:
     #-----------------------------------------------
 
     def applicable(self, state, positive, negative):
-        for i in positive:
-            if i not in state:
-                return False
-        for i in negative:
-            if i in state:
-                return False
-        return True
+        return positive.issubset(state) and negative.isdisjoint(state)
 
     #-----------------------------------------------
     # Apply
     #-----------------------------------------------
 
     def apply(self, state, positive, negative):
-        new_state = []
-        for i in state:
-            if i not in negative:
-                new_state.append(i)
-        for i in positive:
-            if i not in new_state:
-              new_state.append(i)
-        return new_state
+        return frozenset(state.difference(negative).union(positive))
 
 #-----------------------------------------------
 # Main
