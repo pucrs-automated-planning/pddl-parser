@@ -109,3 +109,35 @@ action: carry
   add_effects: []
   del_effects: [['garbage'], ['clean']]
 ```
+
+## API
+
+### Action
+```Python
+class Action:
+    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects)
+    def __str__(self)
+    def __eq__(self, other)
+    def groundify(self, objects, types)
+    def replace(self, group, variables, assignment)
+```
+
+### Parser
+```Python
+class PDDL_Parser:
+    def scan_tokens(self, filename)
+    def parse_domain(self, domain_filename)
+    def parse_predicates(self, group)
+    def parse_types(self, types)
+    def parse_action(self, group)
+    def parse_problem(self, problem_filename)
+    def split_predicates(self, group, pos, neg, name, part)
+```
+
+### Planner
+```Python
+class PDDL_Planner:
+    def solve(self, domain, problem)
+    def applicable(self, state, positive, negative)
+    def apply(self, state, positive, negative)
+```
