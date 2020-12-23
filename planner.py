@@ -27,7 +27,7 @@ class Planner:
             for act in action.groundify(parser.objects, parser.types):
                 ground_actions.append(act)
         # Search
-        visited = [state]
+        visited = set([state])
         fringe = [state, None]
         while fringe:
             state = fringe.pop(0)
@@ -42,7 +42,7 @@ class Planner:
                                 act, plan = plan
                                 full_plan.insert(0, act)
                             return full_plan
-                        visited.append(new_state)
+                        visited.add(new_state)
                         fringe.append(new_state)
                         fringe.append((act, plan))
         return None
