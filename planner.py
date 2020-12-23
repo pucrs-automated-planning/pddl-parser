@@ -1,33 +1,35 @@
 #!/usr/bin/env python
 # Four spaces as indentation [no tabs]
 
-from PDDL import PDDL_Parser
+from PDDL import PDDLParser
+
 
 class Planner:
-
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Solve
-    #-----------------------------------------------
+    # -----------------------------------------------
+    def __init__(self):
+        pass
 
     def solve(self, domain, problem):
         # Parser
-        parser = PDDL_Parser()
+        parser = PDDLParser()
         parser.parse_domain(domain)
         parser.parse_problem(problem)
         # Parsed data
         state = parser.state
-        goal_pos = parser.positive_goals
-        goal_not = parser.negative_goals
+        goal_pos = frozenset(parser.positive_goals)
+        goal_not = frozenset(parser.negative_goals)
         # Do nothing
         if self.applicable(state, goal_pos, goal_not):
             return []
         # Grounding process
         ground_actions = []
         for action in parser.actions:
-            for act in action.groundify(parser.objects):
+            for act in action.groundify(parser.objects, parser.types):
                 ground_actions.append(act)
         # Search
-        visited = [state]
+        visited = set(state)
         fringe = [state, None]
         while fringe:
             state = fringe.pop(0)
@@ -42,43 +44,31 @@ class Planner:
                                 act, plan = plan
                                 full_plan.insert(0, act)
                             return full_plan
-                        visited.append(new_state)
+                        visited.add(new_state)
                         fringe.append(new_state)
                         fringe.append((act, plan))
         return None
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Applicable
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def applicable(self, state, positive, negative):
-        for i in positive:
-            if i not in state:
-                return False
-        for i in negative:
-            if i in state:
-                return False
-        return True
+        return positive.issubset(state) and negative.isdisjoint(state)
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Apply
-    #-----------------------------------------------
-
+    # -----------------------------------------------
     def apply(self, state, positive, negative):
-        new_state = []
-        for i in state:
-            if i not in negative:
-                new_state.append(i)
-        for i in positive:
-            if i not in new_state:
-              new_state.append(i)
-        return new_state
+        return frozenset(state) - negative | positive
+
 
 # ==========================================
 # Main
 # ==========================================
 if __name__ == '__main__':
-    import sys, time
+    import sys
+    import time
     start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
@@ -86,7 +76,7 @@ if __name__ == '__main__':
     plan = planner.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
     if plan:
-        print('plan:')
+        print('Plan -')
         for act in plan:
             print(act)
     else:

@@ -9,7 +9,8 @@ from planner import Planner
 # Test Planner
 # ==========================================
 
-class Test_Planner(unittest.TestCase):
+
+class TestPlanner(unittest.TestCase):
 
     # ------------------------------------------
     # Test solve
@@ -18,12 +19,13 @@ class Test_Planner(unittest.TestCase):
     def test_solve_dinner(self):
         planner = Planner()
         self.assertEqual(planner.solve('examples/dinner/dinner.pddl', 'examples/dinner/pb1.pddl'),
-            [
-                Action('cook', [], [['clean']], [], [['dinner']], []),
-                Action('wrap', [], [['quiet']], [], [['present']], []),
-                Action('carry', [], [['garbage']], [], [], [['garbage'], ['clean']])
-            ]
-        )
+                         [
+                             Action('cook', [], [['clean']], [], [['dinner']], []),
+                             Action('wrap', [], [['quiet']], [], [['present']], []),
+                             Action('carry', [], [['garbage']], [], [], [['garbage'], ['clean']])
+                         ]
+                         )
+
 
 if __name__ == '__main__':
     unittest.main()

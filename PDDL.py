@@ -2,58 +2,69 @@
 # Four spaces as indentation [no tabs]
 
 import re
+from collections import defaultdict
 from action import Action
 
-class PDDL_Parser:
+# TODO: 1. Incorporate constants here.
+# TODO: 2. Add constants to planner.
+
+
+class PDDLParser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
     # ------------------------------------------
     # Tokens
     # ------------------------------------------
+    def __init__(self):
+        self.domain_name = 'unknown'
+        self.requirements = []
+        self.types = defaultdict(list)
+        self.actions = []
+        self.predicates = {}
+        self.problem_name = 'unknown'
+        self.objects = dict()
+        self.state = []
+        self.positive_goals = []
+        self.negative_goals = []
 
     def scan_tokens(self, filename):
-        with open(filename,'r') as f:
+        with open(filename, 'r') as f:
             # Remove single line comments
             str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
         # Tokenize
         stack = []
-        list = []
+        lst = []
         for t in re.findall(r'[()]|[^\s()]+', str):
             if t == '(':
-                stack.append(list)
-                list = []
+                stack.append(lst)
+                lst = []
             elif t == ')':
                 if stack:
-                    l = list
-                    list = stack.pop()
-                    list.append(l)
+                    tmp = lst
+                    lst = stack.pop()
+                    lst.append(tmp)
                 else:
                     raise Exception('Missing open parentheses')
             else:
-                list.append(t)
+                lst.append(t)
         if stack:
             raise Exception('Missing close parentheses')
-        if len(list) != 1:
+        if len(lst) != 1:
             raise Exception('Malformed expression')
-        return list[0]
+        return lst[0]
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse domain
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
-            self.domain_name = 'unknown'
-            self.requirements = []
-            self.types = []
-            self.actions = []
-            self.predicates = {}
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
-                if   t == 'domain':
+                if t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
@@ -63,16 +74,16 @@ class PDDL_Parser:
                 elif t == ':predicates':
                     self.parse_predicates(group)
                 elif t == ':types':
-                    self.types = group
+                    self.parse_types(group)
                 elif t == ':action':
                     self.parse_action(group)
                 else: print(str(t) + ' is not recognized in domain')
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse predicates
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_predicates(self, group):
         for pred in group:
@@ -95,9 +106,27 @@ class PDDL_Parser:
                 arguments[untyped_variables.pop(0)] = 'object'
             self.predicates[predicate_name] = arguments
 
-    #-----------------------------------------------
+    # -----------------------------------------------
+    # Parse types
+    # -----------------------------------------------
+    def parse_types(self, types):
+        untyped_names = []
+        while types:
+            t = types.pop(0)
+            if self.types.get(t):
+                raise Exception('Type ' + t + ' redefined')
+            elif t == '-':
+                if not untyped_names:
+                    raise Exception('Unexpected hyphen in types')
+                typedef = types.pop(0)
+                while untyped_names:
+                    self.types[typedef].append(untyped_names.pop(0))
+            else:
+                untyped_names.append(t)
+
+    # -----------------------------------------------
     # Parse action
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_action(self, group):
         name = group.pop(0)
@@ -136,7 +165,9 @@ class PDDL_Parser:
             elif t == ':effect':
                 self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
             else: print(str(t) + ' is not recognized in action')
-        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
+        self.actions.append(Action(name, parameters, frozenset(positive_preconditions),
+                                   frozenset(negative_preconditions), frozenset(add_effects),
+                                   frozenset(del_effects)))
 
     #-----------------------------------------------
     # Parse problem
@@ -145,15 +176,10 @@ class PDDL_Parser:
     def parse_problem(self, problem_filename):
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
-            self.problem_name = 'unknown'
-            self.objects = dict()
-            self.state = []
-            self.positive_goals = []
-            self.negative_goals = []
             while tokens:
                 group = tokens.pop(0)
                 t = group[0]
-                if   t == 'problem':
+                if t == 'problem':
                     self.problem_name = group[-1]
                 elif t == ':domain':
                     if self.domain_name != group[-1]:
@@ -176,17 +202,19 @@ class PDDL_Parser:
                         self.objects['object'] += object_list
                 elif t == ':init':
                     group.pop(0)
-                    self.state = group
+                    new_group = []
+                    for predicate in group:
+                        new_group.append(tuple(predicate))
+                    self.state = new_group
                 elif t == ':goal':
                     self.split_predicates(group[1], self.positive_goals, self.negative_goals, '', 'goals')
                 else: print(str(t) + ' is not recognized in problem')
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Split predicates
-    #-----------------------------------------------
-
+    # -----------------------------------------------
     def split_predicates(self, group, pos, neg, name, part):
         if not type(group) is list:
             raise Exception('Error with ' + name + part)
@@ -198,18 +226,20 @@ class PDDL_Parser:
             if predicate[0] == 'not':
                 if len(predicate) != 2:
                     raise Exception('Unexpected not in ' + name + part)
-                neg.append(predicate[-1])
+                neg.append(tuple(predicate[-1]))
             else:
-                pos.append(predicate)
+                pos.append(tuple(predicate))
+
 
 # ==========================================
 # Main
 # ==========================================
 if __name__ == '__main__':
-    import sys, pprint
+    import sys
+    import pprint
     domain = sys.argv[1]
     problem = sys.argv[2]
-    parser = PDDL_Parser()
+    parser = PDDLParser()
     print('----------------------------')
     pprint.pprint(parser.scan_tokens(domain))
     print('----------------------------')
