@@ -3,11 +3,12 @@
 
 from PDDL import PDDL_Parser
 
+
 class Planner:
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Solve
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def solve(self, domain, problem):
         # Parser
@@ -24,7 +25,7 @@ class Planner:
         # Grounding process
         ground_actions = []
         for action in parser.actions:
-            for act in action.groundify(parser.objects):
+            for act in action.groundify(parser.objects, parser.types):
                 ground_actions.append(act)
         # Search
         visited = [state]
@@ -47,9 +48,9 @@ class Planner:
                         fringe.append((act, plan))
         return None
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Applicable
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def applicable(self, state, positive, negative):
         for i in positive:
@@ -60,9 +61,9 @@ class Planner:
                 return False
         return True
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Apply
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def apply(self, state, positive, negative):
         new_state = []
@@ -73,6 +74,7 @@ class Planner:
             if i not in new_state:
               new_state.append(i)
         return new_state
+
 
 # ==========================================
 # Main

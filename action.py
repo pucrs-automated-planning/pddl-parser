@@ -24,14 +24,24 @@ class Action:
     def __eq__(self, other): 
         return self.__dict__ == other.__dict__
 
-    def groundify(self, objects):
+    def groundify(self, objects, types):
         if not self.parameters:
             yield self
             return
         type_map = []
         variables = []
-        for var, type in self.parameters:
-            type_map.append(objects[type])
+        for var, typ in self.parameters:
+            type_stack = [typ]
+            items = []
+            while type_stack:
+                t = type_stack.pop()
+                if objects.get(t):
+                    items.extend(objects[t])
+                elif types.get(t):
+                    type_stack.extend(types[t])
+                else:
+                    raise Exception('Unrecognized type {0}'.format(t))
+            type_map.append(items)
             variables.append(var)
         for assignment in itertools.product(*type_map):
             positive_preconditions = self.replace(self.positive_preconditions, variables, assignment)
