@@ -5,7 +5,6 @@ import re
 from collections import defaultdict
 from action import Action
 
-
 class PDDL_Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
@@ -40,9 +39,9 @@ class PDDL_Parser:
             raise Exception('Malformed expression')
         return list[0]
 
-    # -----------------------------------------------
+    #-----------------------------------------------
     # Parse domain
-    # -----------------------------------------------
+    #-----------------------------------------------
 
     def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
@@ -72,9 +71,9 @@ class PDDL_Parser:
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
-    # -----------------------------------------------
+    #-----------------------------------------------
     # Parse predicates
-    # -----------------------------------------------
+    #-----------------------------------------------
 
     def parse_predicates(self, group):
         for pred in group:
@@ -100,11 +99,12 @@ class PDDL_Parser:
     # -----------------------------------------------
     # Parse types
     # -----------------------------------------------
+
     def parse_types(self, types):
         untyped_names = []
         while types:
             t = types.pop(0)
-            if self.types.get(t):
+            if t in self.types:
                 raise Exception('Redefined supertype of ' + t)
             elif t == '-':
                 if not untyped_names:
@@ -117,9 +117,9 @@ class PDDL_Parser:
         while untyped_names:
             self.types['object'].append(untyped_names.pop(0))
 
-    # -----------------------------------------------
+    #-----------------------------------------------
     # Parse action
-    # -----------------------------------------------
+    #-----------------------------------------------
 
     def parse_action(self, group):
         name = group.pop(0)
@@ -160,9 +160,9 @@ class PDDL_Parser:
             else: print(str(t) + ' is not recognized in action')
         self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
 
-    # -----------------------------------------------
+    #-----------------------------------------------
     # Parse problem
-    # -----------------------------------------------
+    #-----------------------------------------------
 
     def parse_problem(self, problem_filename):
         tokens = self.scan_tokens(problem_filename)
@@ -205,9 +205,9 @@ class PDDL_Parser:
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')
 
-    # -----------------------------------------------
+    #-----------------------------------------------
     # Split predicates
-    # -----------------------------------------------
+    #-----------------------------------------------
 
     def split_predicates(self, group, pos, neg, name, part):
         if not type(group) is list:

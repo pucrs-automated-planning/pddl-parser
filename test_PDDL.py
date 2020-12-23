@@ -6,10 +6,6 @@ from collections import defaultdict
 from action import Action
 from PDDL import PDDL_Parser
 
-
-# ==========================================
-# Test PDDL
-# ==========================================
 class Test_PDDL(unittest.TestCase):
 
     #-----------------------------------------------
@@ -106,14 +102,14 @@ class Test_PDDL(unittest.TestCase):
     def test_parse_defined_types(self):
         parser = PDDL_Parser()
         parser.types = defaultdict(list)
-        parser.parse_types(['place', 'locatable', 'level', '-', 'object', 'depot', 'market', '-', 'place',
+        parser.parse_types(['place', 'locatable', 'level', '-', 'object',
+                            'depot', 'market', '-', 'place',
                             'truck', 'goods', '-', 'locatable'])
         self.assertEqual(parser.types, {
             'object': ['place', 'locatable', 'level'],
             'place': ['depot', 'market'],
             'locatable': ['truck', 'goods']
         })
-
 
 #-----------------------------------------------
 # Main

@@ -39,20 +39,21 @@ class Action:
     #-----------------------------------------------
     # Groundify
     #-----------------------------------------------
+
     def groundify(self, objects, types):
         if not self.parameters:
             yield self
             return
         type_map = []
         variables = []
-        for var, typ in self.parameters:
-            type_stack = [typ]
+        for var, type in self.parameters:
+            type_stack = [type]
             items = []
             while type_stack:
                 t = type_stack.pop()
-                if objects.get(t):
+                if t in objects:
                     items.extend(objects[t])
-                elif types.get(t):
+                elif t in types:
                     type_stack.extend(types[t])
                 else:
                     raise Exception('Unrecognized type ' + t)
