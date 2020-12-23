@@ -165,13 +165,15 @@ class PDDL_Parser:
     #-----------------------------------------------
 
     def parse_problem(self, problem_filename):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
             self.objects = dict()
-            self.state = []
-            self.positive_goals = []
-            self.negative_goals = []
+            self.state = frozenset()
+            self.positive_goals = frozenset()
+            self.negative_goals = frozenset()
             while tokens:
                 group = tokens.pop(0)
                 t = group[0]
@@ -198,9 +200,13 @@ class PDDL_Parser:
                         self.objects['object'] += object_list
                 elif t == ':init':
                     group.pop(0)
-                    self.state = group
+                    self.state = frozenset_of_tuples(group)
                 elif t == ':goal':
-                    self.split_predicates(group[1], self.positive_goals, self.negative_goals, '', 'goals')
+                    positive_goals = []
+                    negative_goals = []
+                    self.split_predicates(group[1], positive_goals, negative_goals, '', 'goals')
+                    self.positive_goals = frozenset_of_tuples(positive_goals)
+                    self.negative_goals = frozenset_of_tuples(negative_goals)
                 else: print(str(t) + ' is not recognized in problem')
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')

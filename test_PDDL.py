@@ -66,14 +66,16 @@ class Test_PDDL(unittest.TestCase):
     #-----------------------------------------------
 
     def test_parse_problem(self):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         parser = PDDL_Parser()
         parser.parse_domain('examples/dinner/dinner.pddl')
         parser.parse_problem('examples/dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
         self.assertEqual(parser.objects, {})
-        self.assertEqual(parser.state, [['garbage'],['clean'],['quiet']])
-        self.assertEqual(parser.positive_goals, [['dinner'], ['present']])
-        self.assertEqual(parser.negative_goals, [['garbage']])
+        self.assertEqual(parser.state, frozenset_of_tuples([['garbage'],['clean'],['quiet']]))
+        self.assertEqual(parser.positive_goals, frozenset_of_tuples([['dinner'], ['present']]))
+        self.assertEqual(parser.negative_goals, frozenset_of_tuples([['garbage']]))
 
     #-----------------------------------------------
     # Test parse predicates
@@ -92,6 +94,10 @@ class Test_PDDL(unittest.TestCase):
           'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
           'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
         })
+
+    #-----------------------------------------------
+    # Test parse types
+    #-----------------------------------------------
 
     def test_parse_undefined_types(self):
         parser = PDDL_Parser()
