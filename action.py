@@ -10,12 +10,14 @@ class Action:
     #-----------------------------------------------
 
     def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         self.name = name
         self.parameters = parameters
-        self.positive_preconditions = positive_preconditions
-        self.negative_preconditions = negative_preconditions
-        self.add_effects = add_effects
-        self.del_effects = del_effects
+        self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
+        self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
+        self.add_effects = frozenset_of_tuples(add_effects)
+        self.del_effects = frozenset_of_tuples(del_effects)
 
     #-----------------------------------------------
     # to String
@@ -24,10 +26,10 @@ class Action:
     def __str__(self):
         return 'action: ' + self.name + \
         '\n  parameters: ' + str(self.parameters) + \
-        '\n  positive_preconditions: ' + str(self.positive_preconditions) + \
-        '\n  negative_preconditions: ' + str(self.negative_preconditions) + \
-        '\n  add_effects: ' + str(self.add_effects) + \
-        '\n  del_effects: ' + str(self.del_effects) + '\n'
+        '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
+        '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
+        '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
+        '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
 
     #-----------------------------------------------
     # Equality
@@ -40,14 +42,24 @@ class Action:
     # Groundify
     #-----------------------------------------------
 
-    def groundify(self, objects):
+    def groundify(self, objects, types):
         if not self.parameters:
             yield self
             return
         type_map = []
         variables = []
         for var, type in self.parameters:
-            type_map.append(objects[type])
+            type_stack = [type]
+            items = []
+            while type_stack:
+                t = type_stack.pop()
+                if t in objects:
+                    items.extend(objects[t])
+                elif t in types:
+                    type_stack.extend(types[t])
+                else:
+                    raise Exception('Unrecognized type ' + t)
+            type_map.append(items)
             variables.append(var)
         for assignment in itertools.product(*type_map):
             positive_preconditions = self.replace(self.positive_preconditions, variables, assignment)
@@ -88,5 +100,6 @@ if __name__ == '__main__':
         'agent': ['ana','bob'],
         'pos': ['p1','p2']
     }
-    for act in a.groundify(objects):
+    types = {'object': ['agent', 'pos']}
+    for act in a.groundify(objects, types):
         print(act)

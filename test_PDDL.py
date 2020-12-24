@@ -2,6 +2,7 @@
 # Four spaces as indentation [no tabs]
 
 import unittest
+from collections import defaultdict
 from action import Action
 from PDDL import PDDL_Parser
 
@@ -50,7 +51,7 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.domain_name, 'dinner')
         self.assertEqual(parser.requirements, [':strips'])
         self.assertEqual(parser.predicates, {'clean': {}, 'dinner': {}, 'quiet': {}, 'present': {}, 'garbage': {}})
-        self.assertEqual(parser.types, [])
+        self.assertEqual(parser.types, {})
         self.assertEqual(parser.actions,
             [
                 Action('cook', [], [['clean']], [], [['dinner']], []),
@@ -65,14 +66,16 @@ class Test_PDDL(unittest.TestCase):
     #-----------------------------------------------
 
     def test_parse_problem(self):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         parser = PDDL_Parser()
         parser.parse_domain('examples/dinner/dinner.pddl')
         parser.parse_problem('examples/dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
         self.assertEqual(parser.objects, {})
-        self.assertEqual(parser.state, [['garbage'],['clean'],['quiet']])
-        self.assertEqual(parser.positive_goals, [['dinner'], ['present']])
-        self.assertEqual(parser.negative_goals, [['garbage']])
+        self.assertEqual(parser.state, frozenset_of_tuples([['garbage'],['clean'],['quiet']]))
+        self.assertEqual(parser.positive_goals, frozenset_of_tuples([['dinner'], ['present']]))
+        self.assertEqual(parser.negative_goals, frozenset_of_tuples([['garbage']]))
 
     #-----------------------------------------------
     # Test parse predicates
@@ -90,6 +93,28 @@ class Test_PDDL(unittest.TestCase):
           'untyped_pred': {'?v1': 'object', '?v2': 'object', '?v3': 'object'},
           'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
           'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
+        })
+
+    #-----------------------------------------------
+    # Test parse types
+    #-----------------------------------------------
+
+    def test_parse_undefined_types(self):
+        parser = PDDL_Parser()
+        parser.types = defaultdict(list)
+        parser.parse_types(['location', 'pile', 'robot', 'crane', 'container'])
+        self.assertEqual(parser.types, {'object': ['location', 'pile', 'robot', 'crane', 'container']})
+
+    def test_parse_defined_types(self):
+        parser = PDDL_Parser()
+        parser.types = defaultdict(list)
+        parser.parse_types(['place', 'locatable', 'level', '-', 'object',
+                            'depot', 'market', '-', 'place',
+                            'truck', 'goods', '-', 'locatable'])
+        self.assertEqual(parser.types, {
+            'object': ['place', 'locatable', 'level'],
+            'place': ['depot', 'market'],
+            'locatable': ['truck', 'goods']
         })
 
 #-----------------------------------------------

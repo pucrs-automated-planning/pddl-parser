@@ -2,6 +2,7 @@
 # Four spaces as indentation [no tabs]
 
 import re
+from collections import defaultdict
 from action import Action
 
 class PDDL_Parser:
@@ -47,7 +48,7 @@ class PDDL_Parser:
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.requirements = []
-            self.types = []
+            self.types = defaultdict(list)
             self.actions = []
             self.predicates = {}
             while tokens:
@@ -63,7 +64,7 @@ class PDDL_Parser:
                 elif t == ':predicates':
                     self.parse_predicates(group)
                 elif t == ':types':
-                    self.types = group
+                    self.parse_types(group)
                 elif t == ':action':
                     self.parse_action(group)
                 else: print(str(t) + ' is not recognized in domain')
@@ -94,6 +95,27 @@ class PDDL_Parser:
             while untyped_variables:
                 arguments[untyped_variables.pop(0)] = 'object'
             self.predicates[predicate_name] = arguments
+
+    # -----------------------------------------------
+    # Parse types
+    # -----------------------------------------------
+
+    def parse_types(self, types):
+        untyped_names = []
+        while types:
+            t = types.pop(0)
+            if t in self.types:
+                raise Exception('Redefined supertype of ' + t)
+            elif t == '-':
+                if not untyped_names:
+                    raise Exception('Unexpected hyphen in types')
+                typedef = types.pop(0)
+                while untyped_names:
+                    self.types[typedef].append(untyped_names.pop(0))
+            else:
+                untyped_names.append(t)
+        while untyped_names:
+            self.types['object'].append(untyped_names.pop(0))
 
     #-----------------------------------------------
     # Parse action
@@ -143,13 +165,15 @@ class PDDL_Parser:
     #-----------------------------------------------
 
     def parse_problem(self, problem_filename):
+        def frozenset_of_tuples(data):
+            return frozenset([tuple(t) for t in data])
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
             self.objects = dict()
-            self.state = []
-            self.positive_goals = []
-            self.negative_goals = []
+            self.state = frozenset()
+            self.positive_goals = frozenset()
+            self.negative_goals = frozenset()
             while tokens:
                 group = tokens.pop(0)
                 t = group[0]
@@ -176,9 +200,13 @@ class PDDL_Parser:
                         self.objects['object'] += object_list
                 elif t == ':init':
                     group.pop(0)
-                    self.state = group
+                    self.state = frozenset_of_tuples(group)
                 elif t == ':goal':
-                    self.split_predicates(group[1], self.positive_goals, self.negative_goals, '', 'goals')
+                    positive_goals = []
+                    negative_goals = []
+                    self.split_predicates(group[1], positive_goals, negative_goals, '', 'goals')
+                    self.positive_goals = frozenset_of_tuples(positive_goals)
+                    self.negative_goals = frozenset_of_tuples(negative_goals)
                 else: print(str(t) + ' is not recognized in problem')
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')
