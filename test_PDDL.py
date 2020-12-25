@@ -126,7 +126,7 @@ class Test_PDDL(unittest.TestCase):
     def test_parse_objects(self):
         parser = PDDL_Parser()
         parser.types = defaultdict(list)
-        parser.objects = {}
+        parser.objects = defaultdict(list)
         parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype', 'a'])
         parser.parse_objects([
              'b', '-', 'a',
