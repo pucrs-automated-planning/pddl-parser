@@ -77,4 +77,4 @@ if __name__ == '__main__':
         for act in plan:
             print(act)
     else:
-        print('No plan was found')
+        raise Exception('No plan was found')
