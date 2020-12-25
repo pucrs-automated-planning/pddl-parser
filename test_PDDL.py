@@ -120,15 +120,15 @@ class Test_PDDL(unittest.TestCase):
         })
 
     #-----------------------------------------------
-    # Test constants
+    # Test objects
     #-----------------------------------------------
 
-    def test_parse_constants(self):
+    def test_parse_objects(self):
         parser = PDDL_Parser()
         parser.types = defaultdict(list)
-        parser.constants = defaultdict(list)
-        parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype'])
-        parser.parse_constants([
+        parser.objects = {}
+        parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype', 'a'])
+        parser.parse_objects([
             'north', 'south', '-', 'direction',
             'light', 'medium', 'heavy', '-', 'airplanetype',
             'element1', '-', 'object',
@@ -136,7 +136,7 @@ class Test_PDDL(unittest.TestCase):
             'airplane_CFBEG', '-', 'airplane',
             'element2'
         ])
-        self.assertEqual(parser.constants, {
+        self.assertEqual(parser.objects, {
             'object': ['element1', 'element2'],
             'direction': ['north', 'south'],
             'airplanetype': ['light', 'medium', 'heavy'],
