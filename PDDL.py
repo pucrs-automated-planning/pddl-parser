@@ -2,7 +2,6 @@
 # Four spaces as indentation [no tabs]
 
 import re
-from collections import defaultdict
 from action import Action
 
 class PDDL_Parser:
@@ -48,7 +47,8 @@ class PDDL_Parser:
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
             self.requirements = []
-            self.types = defaultdict(list)
+            self.types = {}
+            self.objects = {}
             self.actions = []
             self.constants = {}
             self.predicates = {}
@@ -94,6 +94,31 @@ class PDDL_Parser:
         if object_list:
             self.objects['object'].extend(object_list)
 
+    # -----------------------------------------------
+    # Parse types
+    # -----------------------------------------------
+
+    def parse_types(self, types):
+        subtype_list = []
+        while types:
+            t = types.pop(0)
+            if t in self.types:
+                raise Exception('Redefined supertype of ' + t)
+            elif t == '-':
+                if not subtype_list:
+                    raise Exception('Unexpected hyphen in types')
+                supertype = types.pop(0)
+                if not supertype in self.types:
+                    self.types[supertype] = []
+                self.types[supertype] += subtype_list
+                subtype_list = []
+            else:
+                subtype_list.append(t)
+        if subtype_list:
+            if not 'object' in self.types:
+                self.types['object'] = []
+        self.types['object'] += subtype_list
+
     #-----------------------------------------------
     # Parse predicates
     #-----------------------------------------------
@@ -118,27 +143,6 @@ class PDDL_Parser:
             while untyped_variables:
                 arguments[untyped_variables.pop(0)] = 'object'
             self.predicates[predicate_name] = arguments
-
-    # -----------------------------------------------
-    # Parse types
-    # -----------------------------------------------
-
-    def parse_types(self, types):
-        untyped_names = []
-        while types:
-            t = types.pop(0)
-            if t in self.types:
-                raise Exception('Redefined supertype of ' + t)
-            elif t == '-':
-                if not untyped_names:
-                    raise Exception('Unexpected hyphen in types')
-                typedef = types.pop(0)
-                while untyped_names:
-                    self.types[typedef].append(untyped_names.pop(0))
-            else:
-                untyped_names.append(t)
-        while untyped_names:
-            self.types['object'].append(untyped_names.pop(0))
 
     #-----------------------------------------------
     # Parse action
@@ -193,7 +197,6 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = defaultdict(list)
             self.state = frozenset()
             self.positive_goals = frozenset()
             self.negative_goals = frozenset()
