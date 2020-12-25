@@ -17,3 +17,4 @@ script:
   - python action.py
   - python PDDL.py    examples/dinner/dinner.pddl examples/dinner/pb1.pddl
   - python planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
+  - python planner.py examples/airport/domain01.pddl examples/airport/task01.pddl

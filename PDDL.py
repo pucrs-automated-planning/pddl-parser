@@ -87,16 +87,12 @@ class PDDL_Parser:
                     raise Exception('Unexpected hyphen in ' + name)
                 group.pop(0)
                 type = group.pop(0)
-                if not type in self.objects:
-                    self.objects[type] = []
-                self.objects[type] += object_list
+                self.objects[type].extend(object_list)
                 object_list = []
             else:
                 object_list.append(group.pop(0))
         if object_list:
-            if not 'object' in self.objects:
-                self.objects['object'] = []
-            self.objects['object'] += object_list
+            self.objects['object'].extend(object_list)
 
     #-----------------------------------------------
     # Parse predicates
@@ -197,7 +193,7 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = {}
+            self.objects = defaultdict(list)
             self.state = frozenset()
             self.positive_goals = frozenset()
             self.negative_goals = frozenset()
