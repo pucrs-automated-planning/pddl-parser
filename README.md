@@ -131,7 +131,7 @@ class PDDL_Parser:
     def parse_types(self, types)
     def parse_action(self, group)
     def parse_problem(self, problem_filename)
-    def split_predicates(self, group, pos, neg, name, part)
+    def split_predicates(self, group, positive, negative, name, part)
 ```
 
 ### Planner
