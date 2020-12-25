@@ -1,5 +1,5 @@
 # PDDL Parser [![Build Status](https://travis-ci.org/pucrs-automated-planning/pddl-parser.svg?branch=master)](https://travis-ci.org/pucrs-automated-planning/pddl-parser) [![DOI](https://zenodo.org/badge/42985356.svg)](https://zenodo.org/badge/latestdoi/42985356)
-**Planning in Python**
+**Classical Planning in Python**
 
 ## Source
 - [action.py](action.py) with an Action class
@@ -128,9 +128,10 @@ class Action:
 class PDDL_Parser:
     def scan_tokens(self, filename)
     def parse_domain(self, domain_filename)
+    def parse_hierarchy(self, group, structure, name, redefine):
     def parse_objects(self, group, name)
-    def parse_predicates(self, group)
     def parse_types(self, types)
+    def parse_predicates(self, group)
     def parse_action(self, group)
     def parse_problem(self, problem_filename)
     def split_predicates(self, group, positive, negative, name, part)
