@@ -49,6 +49,7 @@ class PDDL_Parser:
             self.domain_name = 'unknown'
             self.requirements = []
             self.types = defaultdict(list)
+            self.objects = {}
             self.actions = []
             self.constants = {}
             self.predicates = {}
@@ -197,7 +198,6 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = {}
             self.state = frozenset()
             self.positive_goals = frozenset()
             self.negative_goals = frozenset()
