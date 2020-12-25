@@ -76,52 +76,43 @@ class PDDL_Parser:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
     #-----------------------------------------------
+    # Parse hierarchy
+    #-----------------------------------------------
+
+    def parse_hierarchy(self, group, structure, name, redefine):
+        list = []
+        while group:
+            if redefine and group[0] in structure:
+                raise Exception('Redefined supertype of ' + group[0])
+            elif group[0] == '-':
+                if not list:
+                    raise Exception('Unexpected hyphen in ' + name)
+                group.pop(0)
+                type = group.pop(0)
+                if not type in structure:
+                    structure[type] = []
+                structure[type] += list
+                list = []
+            else:
+                list.append(group.pop(0))
+        if list:
+            if not 'object' in structure:
+                structure['object'] = []
+            structure['object'] += list
+
+    #-----------------------------------------------
     # Parse objects
     #-----------------------------------------------
 
     def parse_objects(self, group, name):
-        object_list = []
-        while group:
-            if group[0] == '-':
-                if not object_list:
-                    raise Exception('Unexpected hyphen in ' + name)
-                group.pop(0)
-                type = group.pop(0)
-                if not type in self.objects:
-                    self.objects[type] = []
-                self.objects[type] += object_list
-                object_list = []
-            else:
-                object_list.append(group.pop(0))
-        if object_list:
-            if not 'object' in self.objects:
-                self.objects['object'] = []
-            self.objects['object'] += object_list
+        self.parse_hierarchy(group, self.objects, name, False)
 
     # -----------------------------------------------
     # Parse types
     # -----------------------------------------------
 
-    def parse_types(self, types):
-        subtype_list = []
-        while types:
-            t = types.pop(0)
-            if t in self.types:
-                raise Exception('Redefined supertype of ' + t)
-            elif t == '-':
-                if not subtype_list:
-                    raise Exception('Unexpected hyphen in types')
-                supertype = types.pop(0)
-                if not supertype in self.types:
-                    self.types[supertype] = []
-                self.types[supertype] += subtype_list
-                subtype_list = []
-            else:
-                subtype_list.append(t)
-        if subtype_list:
-            if not 'object' in self.types:
-                self.types['object'] = []
-        self.types['object'] += subtype_list
+    def parse_types(self, group):
+        self.parse_hierarchy(group, self.types, 'types', True)
 
     #-----------------------------------------------
     # Parse predicates
