@@ -50,17 +50,21 @@ class PDDL_Parser:
             self.requirements = []
             self.types = defaultdict(list)
             self.actions = []
+            self.constants = {}
             self.predicates = {}
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
-                if   t == 'domain':
+                if t == 'domain':
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
                         if not req in self.SUPPORTED_REQUIREMENTS:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
+                elif t == ':constants':
+                    self.parse_objects(group, t)
+                    self.constants = self.objects.copy()
                 elif t == ':predicates':
                     self.parse_predicates(group)
                 elif t == ':types':
@@ -70,6 +74,29 @@ class PDDL_Parser:
                 else: print(str(t) + ' is not recognized in domain')
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
+
+    #-----------------------------------------------
+    # Parse objects
+    #-----------------------------------------------
+
+    def parse_objects(self, group, name):
+        object_list = []
+        while group:
+            if group[0] == '-':
+                if not object_list:
+                    raise Exception('Unexpected hyphen in ' + name)
+                group.pop(0)
+                type = group.pop(0)
+                if not type in self.objects:
+                    self.objects[type] = []
+                self.objects[type] += object_list
+                object_list = []
+            else:
+                object_list.append(group.pop(0))
+        if object_list:
+            if not 'object' in self.objects:
+                self.objects['object'] = []
+            self.objects['object'] += object_list
 
     #-----------------------------------------------
     # Parse predicates
@@ -170,41 +197,28 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = dict()
+            self.objects = {}
             self.state = frozenset()
             self.positive_goals = frozenset()
             self.negative_goals = frozenset()
             while tokens:
                 group = tokens.pop(0)
-                t = group[0]
-                if   t == 'problem':
-                    self.problem_name = group[-1]
+                t = group.pop(0)
+                if t == 'problem':
+                    self.problem_name = group[0]
                 elif t == ':domain':
-                    if self.domain_name != group[-1]:
+                    if self.domain_name != group[0]:
                         raise Exception('Different domain specified in problem file')
                 elif t == ':requirements':
                     pass # Ignore requirements in problem, parse them in the domain
                 elif t == ':objects':
-                    group.pop(0)
-                    object_list = []
-                    while group:
-                        if group[0] == '-':
-                            group.pop(0)
-                            self.objects[group.pop(0)] = object_list
-                            object_list = []
-                        else:
-                            object_list.append(group.pop(0))
-                    if object_list:
-                        if not 'object' in self.objects:
-                            self.objects['object'] = []
-                        self.objects['object'] += object_list
+                    self.parse_objects(group, t)
                 elif t == ':init':
-                    group.pop(0)
                     self.state = frozenset_of_tuples(group)
                 elif t == ':goal':
                     positive_goals = []
                     negative_goals = []
-                    self.split_predicates(group[1], positive_goals, negative_goals, '', 'goals')
+                    self.split_predicates(group[0], positive_goals, negative_goals, '', 'goals')
                     self.positive_goals = frozenset_of_tuples(positive_goals)
                     self.negative_goals = frozenset_of_tuples(negative_goals)
                 else: print(str(t) + ' is not recognized in problem')
@@ -215,7 +229,7 @@ class PDDL_Parser:
     # Split predicates
     #-----------------------------------------------
 
-    def split_predicates(self, group, pos, neg, name, part):
+    def split_predicates(self, group, positive, negative, name, part):
         if not type(group) is list:
             raise Exception('Error with ' + name + part)
         if group[0] == 'and':
@@ -226,9 +240,9 @@ class PDDL_Parser:
             if predicate[0] == 'not':
                 if len(predicate) != 2:
                     raise Exception('Unexpected not in ' + name + part)
-                neg.append(predicate[-1])
+                negative.append(predicate[-1])
             else:
-                pos.append(predicate)
+                positive.append(predicate)
 
 #-----------------------------------------------
 # Main

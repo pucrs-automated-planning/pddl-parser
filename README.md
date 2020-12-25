@@ -127,11 +127,12 @@ class Action:
 class PDDL_Parser:
     def scan_tokens(self, filename)
     def parse_domain(self, domain_filename)
+    def parse_objects(self, group, name)
     def parse_predicates(self, group)
     def parse_types(self, types)
     def parse_action(self, group)
     def parse_problem(self, problem_filename)
-    def split_predicates(self, group, pos, neg, name, part)
+    def split_predicates(self, group, positive, negative, name, part)
 ```
 
 ### Planner
