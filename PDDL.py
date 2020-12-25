@@ -63,7 +63,7 @@ class PDDL_Parser:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
-                    self.parse_objects(group)
+                    self.parse_objects(group, t)
                     self.constants = self.objects.copy()
                 elif t == ':predicates':
                     self.parse_predicates(group)
@@ -79,12 +79,12 @@ class PDDL_Parser:
     # Parse objects
     #-----------------------------------------------
 
-    def parse_objects(self, group):
+    def parse_objects(self, group, name):
         object_list = []
         while group:
             if group[0] == '-':
                 if not object_list:
-                    raise Exception('Unexpected hyphen in constants')
+                    raise Exception('Unexpected hyphen in ' + name)
                 group.pop(0)
                 type = group.pop(0)
                 if not type in self.objects:
@@ -212,7 +212,7 @@ class PDDL_Parser:
                 elif t == ':requirements':
                     pass # Ignore requirements in problem, parse them in the domain
                 elif t == ':objects':
-                    self.parse_objects(group)
+                    self.parse_objects(group, t)
                 elif t == ':init':
                     self.state = frozenset_of_tuples(group)
                 elif t == ':goal':
