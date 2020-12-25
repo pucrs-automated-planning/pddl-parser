@@ -85,14 +85,14 @@ class Test_PDDL(unittest.TestCase):
         parser = PDDL_Parser()
         parser.predicates = {}
         parser.parse_predicates([
-          ['untyped_pred', '?v1', '?v2', '?v3'],
-          ['typed_pred', '?v1', '-', 'type1', '?v2', '-', 'type1', '?v3', '-', 'object'],
-          ['shared_type_pred', '?v1', '?v2', '-', 'type1', '?v3']
+            ['untyped_pred', '?v1', '?v2', '?v3'],
+            ['typed_pred', '?v1', '-', 'type1', '?v2', '-', 'type1', '?v3', '-', 'object'],
+            ['shared_type_pred', '?v1', '?v2', '-', 'type1', '?v3']
         ])
         self.assertEqual(parser.predicates, {
-          'untyped_pred': {'?v1': 'object', '?v2': 'object', '?v3': 'object'},
-          'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
-          'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
+            'untyped_pred': {'?v1': 'object', '?v2': 'object', '?v3': 'object'},
+            'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
+            'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
         })
 
     #-----------------------------------------------
@@ -108,9 +108,11 @@ class Test_PDDL(unittest.TestCase):
     def test_parse_defined_types(self):
         parser = PDDL_Parser()
         parser.types = defaultdict(list)
-        parser.parse_types(['place', 'locatable', 'level', '-', 'object',
-                            'depot', 'market', '-', 'place',
-                            'truck', 'goods', '-', 'locatable'])
+        parser.parse_types([
+            'place', 'locatable', 'level', '-', 'object',
+            'depot', 'market', '-', 'place',
+            'truck', 'goods', '-', 'locatable'
+        ])
         self.assertEqual(parser.types, {
             'object': ['place', 'locatable', 'level'],
             'place': ['depot', 'market'],
@@ -126,12 +128,14 @@ class Test_PDDL(unittest.TestCase):
         parser.types = defaultdict(list)
         parser.constants = defaultdict(list)
         parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype'])
-        parser.parse_constants(['north', 'south', '-', 'direction',
-                                'light', 'medium', 'heavy', '-', 'airplanetype',
-                                'element1', '-', 'object',
-                                'seg_pp_0_60', 'seg_ppdoor_0_40', '-', 'segment',
-                                'airplane_CFBEG', '-', 'airplane',
-                                'element2'])
+        parser.parse_constants([
+            'north', 'south', '-', 'direction',
+            'light', 'medium', 'heavy', '-', 'airplanetype',
+            'element1', '-', 'object',
+            'seg_pp_0_60', 'seg_ppdoor_0_40', '-', 'segment',
+            'airplane_CFBEG', '-', 'airplane',
+            'element2'
+        ])
         self.assertEqual(parser.constants, {
             'object': ['element1', 'element2'],
             'direction': ['north', 'south'],
@@ -139,7 +143,6 @@ class Test_PDDL(unittest.TestCase):
             'segment': ['seg_pp_0_60', 'seg_ppdoor_0_40'],
             'airplane': ['airplane_CFBEG']
         })
-
 
 #-----------------------------------------------
 # Main
