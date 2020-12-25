@@ -137,7 +137,7 @@ class Test_PDDL(unittest.TestCase):
             'seg_pp_0_60', 'seg_ppdoor_0_40', '-', 'segment',
             'airplane_CFBEG', '-', 'airplane',
             'element2'
-        ])
+        ], 'test')
         self.assertEqual(parser.objects, {
             'a': ['b', 'a'],
             'object': ['element1', 'element2'],
