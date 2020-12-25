@@ -2,7 +2,6 @@
 # Four spaces as indentation [no tabs]
 
 import unittest
-from collections import defaultdict
 from action import Action
 from PDDL import PDDL_Parser
 
@@ -101,13 +100,13 @@ class Test_PDDL(unittest.TestCase):
 
     def test_parse_undefined_types(self):
         parser = PDDL_Parser()
-        parser.types = defaultdict(list)
+        parser.types = {}
         parser.parse_types(['location', 'pile', 'robot', 'crane', 'container'])
         self.assertEqual(parser.types, {'object': ['location', 'pile', 'robot', 'crane', 'container']})
 
     def test_parse_defined_types(self):
         parser = PDDL_Parser()
-        parser.types = defaultdict(list)
+        parser.types = {}
         parser.parse_types([
             'place', 'locatable', 'level', '-', 'object',
             'depot', 'market', '-', 'place',
@@ -125,7 +124,7 @@ class Test_PDDL(unittest.TestCase):
 
     def test_parse_objects(self):
         parser = PDDL_Parser()
-        parser.types = defaultdict(list)
+        parser.types = {}
         parser.objects = {}
         parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype', 'a'])
         parser.parse_objects([
