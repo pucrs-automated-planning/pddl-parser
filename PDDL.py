@@ -83,10 +83,13 @@ class PDDL_Parser:
         object_list = []
         while group:
             if group[0] == '-':
-                #if not object_list:
-                #    raise Exception('Unexpected hyphen in constants')
+                if not object_list:
+                    raise Exception('Unexpected hyphen in constants')
                 group.pop(0)
-                self.objects[group.pop(0)] = object_list
+                type = group.pop(0)
+                if not type in self.objects:
+                    self.objects[type] = []
+                self.objects[type] += object_list
                 object_list = []
             else:
                 object_list.append(group.pop(0))

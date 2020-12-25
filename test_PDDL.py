@@ -129,6 +129,8 @@ class Test_PDDL(unittest.TestCase):
         parser.objects = {}
         parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype', 'a'])
         parser.parse_objects([
+             'b', '-', 'a',
+             'a', '-', 'a',
             'north', 'south', '-', 'direction',
             'light', 'medium', 'heavy', '-', 'airplanetype',
             'element1', '-', 'object',
@@ -137,6 +139,7 @@ class Test_PDDL(unittest.TestCase):
             'element2'
         ])
         self.assertEqual(parser.objects, {
+            'a': ['b', 'a'],
             'object': ['element1', 'element2'],
             'direction': ['north', 'south'],
             'airplanetype': ['light', 'medium', 'heavy'],

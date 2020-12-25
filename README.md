@@ -127,6 +127,7 @@ class Action:
 class PDDL_Parser:
     def scan_tokens(self, filename)
     def parse_domain(self, domain_filename)
+    def parse_objects(self, group)
     def parse_predicates(self, group)
     def parse_types(self, types)
     def parse_action(self, group)
