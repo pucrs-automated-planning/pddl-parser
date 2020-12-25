@@ -117,6 +117,30 @@ class Test_PDDL(unittest.TestCase):
             'locatable': ['truck', 'goods']
         })
 
+    #-----------------------------------------------
+    # Test constants
+    #-----------------------------------------------
+
+    def test_parse_constants(self):
+        parser = PDDL_Parser()
+        parser.types = defaultdict(list)
+        parser.constants = defaultdict(list)
+        parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype'])
+        parser.parse_constants(['north', 'south', '-', 'direction',
+                                'light', 'medium', 'heavy', '-', 'airplanetype',
+                                'element1', '-', 'object',
+                                'seg_pp_0_60', 'seg_ppdoor_0_40', '-', 'segment',
+                                'airplane_CFBEG', '-', 'airplane',
+                                'element2'])
+        self.assertEqual(parser.constants, {
+            'object': ['element1', 'element2'],
+            'direction': ['north', 'south'],
+            'airplanetype': ['light', 'medium', 'heavy'],
+            'segment': ['seg_pp_0_60', 'seg_ppdoor_0_40'],
+            'airplane': ['airplane_CFBEG']
+        })
+
+
 #-----------------------------------------------
 # Main
 #-----------------------------------------------

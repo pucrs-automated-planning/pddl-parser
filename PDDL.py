@@ -50,6 +50,7 @@ class PDDL_Parser:
             self.requirements = []
             self.types = defaultdict(list)
             self.actions = []
+            self.constants = defaultdict(list)
             self.predicates = {}
             while tokens:
                 group = tokens.pop(0)
@@ -61,6 +62,8 @@ class PDDL_Parser:
                         if not req in self.SUPPORTED_REQUIREMENTS:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
+                elif t == ':constants':
+                    self.parse_constants(group)
                 elif t == ':predicates':
                     self.parse_predicates(group)
                 elif t == ':types':
@@ -70,6 +73,27 @@ class PDDL_Parser:
                 else: print(str(t) + ' is not recognized in domain')
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
+
+    #-----------------------------------------------
+    # Parse constants
+    #-----------------------------------------------
+
+    def parse_constants(self, group):
+        constant_list = []
+        while group:
+            item = group.pop(0)
+            if self.constants.get(item):
+                raise Exception('Redefined constant ' + item)
+            elif item == '-':
+                if not constant_list:
+                    raise Exception('Unexpected hyphen in constants')
+                typedef = group.pop(0)
+                while constant_list:
+                    self.constants[typedef].append(constant_list.pop(0))
+            else:
+                constant_list.append(item)
+        while constant_list:
+            self.constants['object'].append(constant_list.pop(0))
 
     #-----------------------------------------------
     # Parse predicates
@@ -170,7 +194,7 @@ class PDDL_Parser:
         tokens = self.scan_tokens(problem_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.problem_name = 'unknown'
-            self.objects = dict()
+            self.objects = self.constants.copy()
             self.state = frozenset()
             self.positive_goals = frozenset()
             self.negative_goals = frozenset()
@@ -229,6 +253,7 @@ class PDDL_Parser:
                 neg.append(predicate[-1])
             else:
                 pos.append(predicate)
+
 
 #-----------------------------------------------
 # Main
