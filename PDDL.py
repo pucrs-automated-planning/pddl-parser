@@ -6,9 +6,11 @@ from collections import defaultdict
 from action import Action
 
 class PDDL_Parser:
-
+    def __init__(self, action_format):
+        self.action_format = action_format
+        
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
-
+    
     #-----------------------------------------------
     # Tokens
     #-----------------------------------------------
@@ -186,7 +188,8 @@ class PDDL_Parser:
             elif t == ':effect':
                 self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
             else: print(str(t) + ' is not recognized in action')
-        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
+        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, 
+                                   add_effects, del_effects, self.action_format))
 
     #-----------------------------------------------
     # Parse problem

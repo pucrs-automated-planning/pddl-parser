@@ -4,14 +4,16 @@
 from PDDL import PDDL_Parser
 
 class Planner:
-
+    def __init__(self, plan_format):
+        self.plan_format = plan_format
+        
     #-----------------------------------------------
     # Solve
     #-----------------------------------------------
 
     def solve(self, domain, problem):
         # Parser
-        parser = PDDL_Parser()
+        parser = PDDL_Parser(self.plan_format)
         parser.parse_domain(domain)
         parser.parse_problem(problem)
         # Parsed data
@@ -61,15 +63,44 @@ class Planner:
     def apply(self, state, positive, negative):
         return state.difference(negative).union(positive)
 
+
+def display_help():
+    print('usage: python -B planner.py [option] domain_file problem_file')
+    print('Options and arguments:')
+    print('-h:           print this help message and exit (also --help)')
+    print('-f=OPT:       format for printing plan actions (also --format)')
+    print('              OPT is NORMAL or VERBOSE; default is NORMAL.')
+    print('domain_file:  Planning Domain Definition Language (PDDL) domain file')
+    print('problem_file: Planning Domain Definition Language (PDDL) problem file')
+    print()
+
+
 #-----------------------------------------------
 # Main
 #-----------------------------------------------
 if __name__ == '__main__':
     import sys, time
     start_time = time.time()
-    domain = sys.argv[1]
-    problem = sys.argv[2]
-    planner = Planner()
+    narg = len(sys.argv)
+    if narg != 3 and narg != 4:
+        display_help()
+        sys.exit(0)
+    arg1 = sys.argv[1].strip()
+    domain = None
+    problem = None
+    format = 'normal'
+    if arg1 == '--help' or arg1 == '-h':
+        display_help()
+        sys.exit(0)
+    elif arg1.startswith('-f=') or arg1.startswith('--format='):
+        _, format = arg1.split('=')
+        format = format.lower()
+        domain = sys.argv[2]
+        problem = sys.argv[3]
+    else:
+        domain = sys.argv[1]
+        problem = sys.argv[2]
+    planner = Planner(format)
     plan = planner.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
     if plan:

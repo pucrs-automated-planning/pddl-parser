@@ -3,13 +3,15 @@
 
 import itertools
 
+
 class Action:
 
     #-----------------------------------------------
     # Initialize
     #-----------------------------------------------
 
-    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
+    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects,
+                 format='normal'):
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
         self.name = name
@@ -18,18 +20,30 @@ class Action:
         self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
         self.add_effects = frozenset_of_tuples(add_effects)
         self.del_effects = frozenset_of_tuples(del_effects)
+        self.format = format
 
     #-----------------------------------------------
     # to String
     #-----------------------------------------------
 
     def __str__(self):
-        return 'action: ' + self.name + \
-        '\n  parameters: ' + str(self.parameters) + \
-        '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
-        '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
-        '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
-        '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
+        if self.format == 'normal':
+            out = self.name + '('
+            params = list(self.parameters)
+            for p in params[:-1]:
+                out += p + ', '
+            if params:
+                out += params[-1] + ')'
+            else:
+                out += ')'
+            return out
+        else:  # format is 'verbose'
+            return 'action: ' + self.name + \
+            '\n  parameters: ' + str(self.parameters) + \
+            '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
+            '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
+            '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
+            '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
 
     #-----------------------------------------------
     # Equality
@@ -66,7 +80,8 @@ class Action:
             negative_preconditions = self.replace(self.negative_preconditions, variables, assignment)
             add_effects = self.replace(self.add_effects, variables, assignment)
             del_effects = self.replace(self.del_effects, variables, assignment)
-            yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects)
+            yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects,
+                         self.format)
 
     #-----------------------------------------------
     # Replace
