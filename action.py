@@ -107,7 +107,8 @@ if __name__ == '__main__':
         [['at', '?ag', '?from'], ['adjacent', '?from', '?to']],
         [['at', '?ag', '?to']],
         [['at', '?ag', '?to']],
-        [['at', '?ag', '?from']]
+        [['at', '?ag', '?from']],
+        'verbose'
     )
     print(a)
 
