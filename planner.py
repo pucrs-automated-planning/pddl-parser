@@ -72,9 +72,10 @@ if __name__ == '__main__':
     planner = Planner()
     plan = planner.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
-    if plan:
+    if type(plan) is list:
         print('plan:')
         for act in plan:
             print(act)
     else:
         print('No plan was found')
+        exit(1)
