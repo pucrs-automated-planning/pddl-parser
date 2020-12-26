@@ -6,7 +6,7 @@ from collections import defaultdict
 from action import Action
 
 class PDDL_Parser:
-    def __init__(self, action_format):
+    def __init__(self, action_format='normal'):
         self.action_format = action_format
         
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
