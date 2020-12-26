@@ -4,7 +4,7 @@
 from PDDL import PDDL_Parser
 
 class Planner:
-    def __init__(self, plan_format):
+    def __init__(self, plan_format='normal'):
         self.plan_format = plan_format
         
     #-----------------------------------------------
