@@ -76,7 +76,7 @@ if __name__ == '__main__':
     if type(plan) is list:
         print('plan:')
         for act in plan:
-            print(act if verbose else act.name + ' ' + ''.join(act.parameters))
+            print(act if verbose else act.name + ' ' + ' '.join(act.parameters))
     else:
         print('No plan was found')
         exit(1)
