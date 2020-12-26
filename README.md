@@ -82,10 +82,12 @@ Negative goals: [['garbage']]
 ```
 
 ## Planner execution
+The output of the planner is more verbose with option ``-v``.
+
 ```Shell
 # Planning using BFS
 cd pddl-parser
-python -B planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
+python -B planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
 # Output
 Time: 0.00200009346008s
 plan:
