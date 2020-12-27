@@ -118,7 +118,7 @@ action: carry
 ### Action
 ```Python
 class Action:
-    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects)
+    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, extensions = None)
     def __str__(self)
     def __eq__(self, other)
     def groundify(self, objects, types)
@@ -130,12 +130,15 @@ class Action:
 class PDDL_Parser:
     def scan_tokens(self, filename)
     def parse_domain(self, domain_filename)
-    def parse_hierarchy(self, group, structure, name, redefine):
+    def parse_domain_extended(self, t, group)
+    def parse_hierarchy(self, group, structure, name, redefine)
     def parse_objects(self, group, name)
     def parse_types(self, types)
     def parse_predicates(self, group)
     def parse_action(self, group)
+    def parse_action_extended(self, t, group)
     def parse_problem(self, problem_filename)
+    def parse_problem_extended(self, t, group)
     def split_predicates(self, group, positive, negative, name, part)
 ```
 

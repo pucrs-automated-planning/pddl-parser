@@ -71,9 +71,12 @@ class PDDL_Parser:
                     self.parse_types(group)
                 elif t == ':action':
                     self.parse_action(group)
-                else: print(str(t) + ' is not recognized in domain')
+                else: self.parse_domain_extended(t, group)
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
+
+    def parse_domain_extended(self, t, group):
+        print(str(t) + ' is not recognized in domain')
 
     #-----------------------------------------------
     # Parse hierarchy
@@ -155,6 +158,7 @@ class PDDL_Parser:
         negative_preconditions = []
         add_effects = []
         del_effects = []
+        extensions = None
         while group:
             t = group.pop(0)
             if t == ':parameters':
@@ -179,8 +183,11 @@ class PDDL_Parser:
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
                 self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
-            else: print(str(t) + ' is not recognized in action')
-        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects))
+            else: extensions = self.parse_action_extended(t, group)
+        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, extensions))
+
+    def parse_action_extended(self, t, group):
+        print(str(t) + ' is not recognized in action')
 
     #-----------------------------------------------
     # Parse problem
@@ -215,9 +222,12 @@ class PDDL_Parser:
                     self.split_predicates(group[0], positive_goals, negative_goals, '', 'goals')
                     self.positive_goals = frozenset_of_tuples(positive_goals)
                     self.negative_goals = frozenset_of_tuples(negative_goals)
-                else: print(str(t) + ' is not recognized in problem')
+                else: self.parse_problem_extended(t, group)
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')
+
+    def parse_problem_extended(self, t, group):
+        print(str(t) + ' is not recognized in problem')
 
     #-----------------------------------------------
     # Split predicates
