@@ -54,9 +54,9 @@ class Action:
             while type_stack:
                 t = type_stack.pop()
                 if t in objects:
-                    items.extend(objects[t])
+                    items += objects[t]
                 elif t in types:
-                    type_stack.extend(types[t])
+                    type_stack += types[t]
                 else:
                     raise Exception('Unrecognized type ' + t)
             type_map.append(items)
