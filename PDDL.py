@@ -50,7 +50,6 @@ class PDDL_Parser:
             self.types = {}
             self.objects = {}
             self.actions = []
-            self.constants = {}
             self.predicates = {}
             while tokens:
                 group = tokens.pop(0)
@@ -64,7 +63,6 @@ class PDDL_Parser:
                     self.requirements = group
                 elif t == ':constants':
                     self.parse_objects(group, t)
-                    self.constants = self.objects.copy()
                 elif t == ':predicates':
                     self.parse_predicates(group)
                 elif t == ':types':
