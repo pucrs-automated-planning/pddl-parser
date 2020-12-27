@@ -150,7 +150,8 @@ class PDDL_Planner:
     def apply(self, state, positive, negative)
 ```
 
-# Notes
-New parser features should be added through inheritance using ``super`` and ``parse_*_extended`` methods.
+## Notes
+New Parser features should be added through inheritance using ``super`` and ``parse_*_extended`` methods.
+The Action class must be replaced to deal with possible extensions.
 The planner is only an example, being compact for educational purposes.
 New features are outside the scope of this project, which was originally intended as a propositional PDDL parser to avoid the complexity of grounding and the ambiguity of typing descriptions.
