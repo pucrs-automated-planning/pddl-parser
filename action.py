@@ -88,16 +88,14 @@ class Action:
     #-----------------------------------------------
 
     def replace(self, group, variables, assignment):
-        g = []
+        new_group = []
         for pred in group:
             pred = list(pred)
-            iv = 0
-            for v in variables:
-                while v in pred:
-                    pred[pred.index(v)] = assignment[iv]
-                iv += 1
-            g.append(pred)
-        return g
+            for i, p in enumerate(pred):
+                if p in variables:
+                    pred[i] = assignment[variables.index(p)]
+            new_group.append(pred)
+        return new_group
 
 #-----------------------------------------------
 # Main
