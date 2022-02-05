@@ -28,7 +28,7 @@ class PDDL_Parser:
     #-----------------------------------------------
 
     def scan_tokens(self, filename):
-        with open(filename,'r') as f:
+        with open(filename) as f:
             # Remove single line comments
             str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
         # Tokenize
