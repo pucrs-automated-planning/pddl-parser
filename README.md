@@ -1,6 +1,11 @@
 # PDDL Parser [![Actions Status](https://github.com/pucrs-automated-planning/pddl-parser/workflows/build/badge.svg)](https://github.com/pucrs-automated-planning/pddl-parser/actions) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4391071.svg)](https://doi.org/10.5281/zenodo.4391071) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 **Classical Planning in Python**
 
+PDDL Parser is a simple parser for [PDDL](https://en.wikipedia.org/wiki/Planning_Domain_Definition_Language), described in Python without external dependencies.
+It supports ``:strips``, ``:negative-preconditions`` and ``:typing`` requirements.
+It contains a planner only as an example, being compact and readable for educational purposes.
+New features are outside the scope of this project, which was originally intended as a propositional PDDL parser to avoid the complexity of grounding and the ambiguity of typing descriptions.
+
 ## Source
 - [action.py](action.py) with an Action class
 - [PDDL.py](PDDL.py) with a PDDL parser
@@ -149,8 +154,6 @@ class PDDL_Planner:
     def apply(self, state, positive, negative)
 ```
 
-## Notes
-New Parser features should be added through inheritance using ``super`` and ``parse_*_extended`` methods.
-The Action class must be replaced to deal with possible extensions.
-The planner is only an example, being compact for educational purposes.
-New features are outside the scope of this project, which was originally intended as a propositional PDDL parser to avoid the complexity of grounding and the ambiguity of typing descriptions.
+## Expanding
+New parser features should be added through inheritance using ``super``, ``parse_domain_extended`` and ``parse_problem_extended`` methods.
+The Action class may also require modifications to deal with possible extensions.
