@@ -18,11 +18,12 @@
 
 from PDDL import PDDL_Parser
 
+
 class Planner:
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Solve
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def solve(self, domain, problem):
         # Parser
@@ -62,25 +63,28 @@ class Planner:
                         fringe.append((act, plan))
         return None
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Applicable
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def applicable(self, state, positive, negative):
         return positive.issubset(state) and negative.isdisjoint(state)
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Apply
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def apply(self, state, positive, negative):
         return state.difference(negative).union(positive)
 
-#-----------------------------------------------
+
+# -----------------------------------------------
 # Main
-#-----------------------------------------------
+# -----------------------------------------------
 if __name__ == '__main__':
-    import sys, time
+    import sys
+    import time
+
     start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
