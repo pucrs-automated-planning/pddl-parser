@@ -6,11 +6,10 @@
 - [PDDL.py](PDDL.py) with a PDDL parser
 - [planner.py](planner.py) with a planner
 - [examples](examples/) folder with PDDL domains:
-  - [Airport](examples/airport) from AIPS2000 Planning Competition
   - [Dinner](examples/dinner) from Daniel Weld, a propositional domain
   - [Blocks World](examples/blocksworld)
-  - [Dock Worker Robot](examples/dwr)
   - [Travelling Salesman Problem](examples/tsp)
+  - [Dock Worker Robot](examples/dwr)
 
 ## Parser execution
 ```Shell
