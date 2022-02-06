@@ -6,6 +6,8 @@ It supports ``:strips``, ``:negative-preconditions`` and ``:typing`` requirement
 It contains a planner only as an example, being compact and readable for educational purposes.
 New features are outside the scope of this project, which was originally intended as a propositional PDDL parser to avoid the complexity of grounding and the ambiguity of typing descriptions.
 
+PDDL Parser was originally designed and developed by [Mau Magnaguagno](https://github.com/Maumagnaguagno) in 2015 to be used in the classroom, following [HyperTensioN](https://github.com/Maumagnaguagno/HyperTensioN)'s parsing style.
+
 ## Source
 - [action.py](action.py) with an Action class
 - [PDDL.py](PDDL.py) with a PDDL parser
@@ -16,12 +18,17 @@ New features are outside the scope of this project, which was originally intende
   - [Travelling Salesman Problem](examples/tsp)
   - [Dock Worker Robot](examples/dwr)
 
-## Parser execution
+## Execution
+The parser can be executed without planning, it outputs elements found in the input files and the structures created.
+
 ```Shell
-# Parser can be used separately
 cd pddl-parser
 python -B PDDL.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
-# Output
+```
+
+<details><summary>Parser output</summary>
+
+```Shell
 ----------------------------
 ['define',
  ['domain', 'dinner'],
@@ -84,15 +91,19 @@ State: [['garbage'], ['clean'], ['quiet']]
 Positive goals: [['dinner'], ['present']]
 Negative goals: [['garbage']]
 ```
+</details>
 
-## Planner execution
+The planner uses BFS, it outputs the time taken and signatures of the actions in the plan found or failure.
 The output of the planner is more verbose with option ``-v``.
 
 ```Shell
-# Planning using BFS
 cd pddl-parser
 python -B planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
-# Output
+```
+
+<details><summary>Planner output</summary>
+
+```Shell
 Time: 0.00200009346008s
 plan:
 action: cook
@@ -116,6 +127,7 @@ action: carry
   add_effects: []
   del_effects: [['garbage'], ['clean']]
 ```
+</details>
 
 ## API
 
@@ -154,6 +166,6 @@ class PDDL_Planner:
     def apply(self, state, positive, negative)
 ```
 
-## Expanding
-New parser features should be added through inheritance using ``super``, ``parse_domain_extended`` and ``parse_problem_extended`` methods.
+## Extensions
+New parser features should be added through inheritance using ``super`` and ``parse_*_extended`` methods.
 The Action class may also require modifications to deal with possible extensions.
