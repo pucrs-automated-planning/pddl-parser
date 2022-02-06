@@ -11,7 +11,7 @@
   - [Blocks World](examples/blocksworld)
   - [Dock Worker Robot](examples/dwr)
   - [Travelling Salesman Problem](examples/tsp)
-
+  - [8-Puzzle](examples/n_puzzle) instance from <i>Artificial Intelligence: A Modern Approach</i> by Russell & Norvig.
 ## Parser execution
 ```Shell
 # Parser can be used separately
