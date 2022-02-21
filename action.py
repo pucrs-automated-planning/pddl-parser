@@ -70,10 +70,8 @@ class Action:
                 t = type_stack.pop()
                 if t in objects:
                     items += objects[t]
-                elif t in types:
+                if t in types:
                     type_stack += types[t]
-                else:
-                    raise Exception('Unrecognized type ' + t)
             type_map.append(items)
             variables.append(var)
         for assignment in itertools.product(*type_map):
