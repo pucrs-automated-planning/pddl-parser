@@ -29,7 +29,7 @@ class Action:
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
         self.name = name
-        self.parameters = parameters
+        self.parameters = tuple(parameters)  # Make parameters a tuple so we can hash this if need be
         self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
         self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
         self.add_effects = frozenset_of_tuples(add_effects)

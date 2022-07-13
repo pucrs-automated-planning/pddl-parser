@@ -20,30 +20,31 @@ import unittest
 from action import Action
 from PDDL import PDDL_Parser
 
+
 class Test_PDDL(unittest.TestCase):
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Test scan_tokens
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def test_scan_tokens_domain(self):
         parser = PDDL_Parser()
         self.assertEqual(parser.scan_tokens('examples/dinner/dinner.pddl'),
-            ['define', ['domain', 'dinner'],
-            [':requirements', ':strips'],
-            [':predicates', ['clean'], ['dinner'], ['quiet'], ['present'], ['garbage']],
-            [':action', 'cook',
-                ':precondition', ['clean'],
-                ':effect', ['dinner']],
-            [':action', 'wrap',
-                ':precondition', ['quiet'],
-                ':effect', ['present']],
-            [':action', 'carry',
-                ':precondition', ['garbage'],
-                ':effect', ['and', ['not', ['garbage']], ['not', ['clean']]]],
-            [':action', 'dolly',
-                ':precondition', ['garbage'],
-                ':effect', ['and', ['not', ['garbage']], ['not', ['quiet']]]]]
+                ['define', ['domain', 'dinner'],
+                [':requirements', ':strips'],
+                [':predicates', ['clean'], ['dinner'], ['quiet'],             ['present'], ['garbage']],
+                [':action', 'cook',
+                    ':precondition', ['clean'],
+                    ':effect', ['dinner']],
+                [':action', 'wrap',
+                    ':precondition', ['quiet'],
+                    ':effect', ['present']],
+                [':action', 'carry',
+                    ':precondition', ['garbage'],
+                    ':effect', ['and', ['not', ['garbage']],             ['not', ['clean']]]],
+                [':action', 'dolly',
+                    ':precondition', ['garbage'],
+                    ':effect', ['and', ['not', ['garbage']], ['not', ['quiet']]]]]
         )
 
     def test_scan_tokens_problem(self):
@@ -55,9 +56,9 @@ class Test_PDDL(unittest.TestCase):
             [':goal', ['and', ['dinner'], ['present'], ['not', ['garbage']]]]]
         )
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Test parse domain
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def test_parse_domain(self):
         parser = PDDL_Parser()
@@ -75,9 +76,9 @@ class Test_PDDL(unittest.TestCase):
             ]
         )
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Test parse problem
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def test_parse_problem(self):
         def frozenset_of_tuples(data):
@@ -91,9 +92,9 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.positive_goals, frozenset_of_tuples([['dinner'], ['present']]))
         self.assertEqual(parser.negative_goals, frozenset_of_tuples([['garbage']]))
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Test parse predicates
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def test_parse_predicates(self):
         parser = PDDL_Parser()
@@ -161,8 +162,9 @@ class Test_PDDL(unittest.TestCase):
             'airplane': ['airplane_CFBEG']
         })
 
-#-----------------------------------------------
+
+# -----------------------------------------------
 # Main
-#-----------------------------------------------
+# -----------------------------------------------
 if __name__ == '__main__':
     unittest.main()
