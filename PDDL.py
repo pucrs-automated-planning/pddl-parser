@@ -19,13 +19,14 @@
 import re
 from action import Action
 
+
 class PDDL_Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Tokens
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def scan_tokens(self, filename):
         with open(filename) as f:
@@ -40,9 +41,9 @@ class PDDL_Parser:
                 list = []
             elif t == ')':
                 if stack:
-                    l = list
+                    li = list
                     list = stack.pop()
-                    list.append(l)
+                    list.append(li)
                 else:
                     raise Exception('Missing open parentheses')
             else:
@@ -53,9 +54,9 @@ class PDDL_Parser:
             raise Exception('Malformed expression')
         return list[0]
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse domain
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
@@ -73,7 +74,7 @@ class PDDL_Parser:
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
-                        if not req in self.SUPPORTED_REQUIREMENTS:
+                        if req not in self.SUPPORTED_REQUIREMENTS:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
@@ -91,9 +92,9 @@ class PDDL_Parser:
     def parse_domain_extended(self, t, group):
         print(str(t) + ' is not recognized in domain')
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse hierarchy
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_hierarchy(self, group, structure, name, redefine):
         list = []
@@ -105,20 +106,20 @@ class PDDL_Parser:
                     raise Exception('Unexpected hyphen in ' + name)
                 group.pop(0)
                 type = group.pop(0)
-                if not type in structure:
+                if type not in structure:
                     structure[type] = []
                 structure[type] += list
                 list = []
             else:
                 list.append(group.pop(0))
         if list:
-            if not 'object' in structure:
+            if 'object' not in structure:
                 structure['object'] = []
             structure['object'] += list
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse objects
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_objects(self, group, name):
         self.parse_hierarchy(group, self.objects, name, False)
@@ -130,9 +131,9 @@ class PDDL_Parser:
     def parse_types(self, group):
         self.parse_hierarchy(group, self.types, 'types', True)
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse predicates
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_predicates(self, group):
         for pred in group:
@@ -155,9 +156,9 @@ class PDDL_Parser:
                 arguments[untyped_variables.pop(0)] = 'object'
             self.predicates[predicate_name] = arguments
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse action
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_action(self, group):
         name = group.pop(0)
@@ -202,9 +203,9 @@ class PDDL_Parser:
     def parse_action_extended(self, t, group):
         print(str(t) + ' is not recognized in action')
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Parse problem
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def parse_problem(self, problem_filename):
         def frozenset_of_tuples(data):
@@ -224,7 +225,7 @@ class PDDL_Parser:
                     if self.domain_name != group[0]:
                         raise Exception('Different domain specified in problem file')
                 elif t == ':requirements':
-                    pass # Ignore requirements in problem, parse them in the domain
+                    pass  # Ignore requirements in problem, parse them in the domain
                 elif t == ':objects':
                     self.parse_objects(group, t)
                 elif t == ':init':
@@ -242,9 +243,9 @@ class PDDL_Parser:
     def parse_problem_extended(self, t, group):
         print(str(t) + ' is not recognized in problem')
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Split predicates
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     def split_predicates(self, group, positive, negative, name, part):
         if not type(group) is list:
@@ -261,9 +262,10 @@ class PDDL_Parser:
             else:
                 positive.append(predicate)
 
-#-----------------------------------------------
+
+# -----------------------------------------------
 # Main
-#-----------------------------------------------
+# -----------------------------------------------
 if __name__ == '__main__':
     import sys, pprint
     domain = sys.argv[1]
