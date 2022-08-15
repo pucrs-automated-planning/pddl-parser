@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys, pprint
 from pddl_parser.PDDL import PDDL_Parser
