@@ -58,10 +58,7 @@ class PDDL_Parser:
     # Parse domain
     # -----------------------------------------------
 
-    def parse_domain(self, domain_filename, ignored_requirements=None):
-
-        _ignored_reqs = ignored_requirements if ignored_requirements is not None else list()
-
+    def parse_domain(self, domain_filename):
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
@@ -77,7 +74,7 @@ class PDDL_Parser:
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
-                        if req not in self.SUPPORTED_REQUIREMENTS and req not in _ignored_reqs:
+                        if req not in self.SUPPORTED_REQUIREMENTS:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
@@ -270,6 +267,7 @@ class PDDL_Parser:
 # Main
 # -----------------------------------------------
 if __name__ == '__main__':
+    import sys, pprint
     domain = sys.argv[1]
     problem = sys.argv[2]
     parser = PDDL_Parser()

@@ -82,6 +82,7 @@ class Planner:
 # Main
 # -----------------------------------------------
 if __name__ == '__main__':
+    import sys, time
     start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
