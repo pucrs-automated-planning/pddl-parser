@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import re
-from pddl_parser.action import Action
+from .action import Action
 
 
 class PDDL_Parser:
