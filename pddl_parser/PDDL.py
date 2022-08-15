@@ -58,7 +58,10 @@ class PDDL_Parser:
     # Parse domain
     # -----------------------------------------------
 
-    def parse_domain(self, domain_filename):
+    def parse_domain(self, domain_filename, ignored_requirements=None):
+
+        _ignored_reqs = ignored_requirements if ignored_requirements is not None else list()
+
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
@@ -74,7 +77,7 @@ class PDDL_Parser:
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
-                        if req not in self.SUPPORTED_REQUIREMENTS:
+                        if req not in self.SUPPORTED_REQUIREMENTS and req not in _ignored_reqs:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
@@ -261,3 +264,28 @@ class PDDL_Parser:
                 negative.append(predicate[-1])
             else:
                 positive.append(predicate)
+
+
+# -----------------------------------------------
+# Main
+# -----------------------------------------------
+if __name__ == '__main__':
+    domain = sys.argv[1]
+    problem = sys.argv[2]
+    parser = PDDL_Parser()
+    print('----------------------------')
+    pprint.pprint(parser.scan_tokens(domain))
+    print('----------------------------')
+    pprint.pprint(parser.scan_tokens(problem))
+    print('----------------------------')
+    parser.parse_domain(domain)
+    parser.parse_problem(problem)
+    print('Domain name: ' + parser.domain_name)
+    for act in parser.actions:
+        print(act)
+    print('----------------------------')
+    print('Problem name: ' + parser.problem_name)
+    print('Objects: ' + str(parser.objects))
+    print('State: ' + str([list(i) for i in parser.state]))
+    print('Positive goals: ' + str([list(i) for i in parser.positive_goals]))
+    print('Negative goals: ' + str([list(i) for i in parser.negative_goals]))
