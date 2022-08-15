@@ -18,6 +18,7 @@ jobs:
     - run: python test_PDDL.py
     - run: python test_planner.py
     # Examples
+    - run: python setup.py install
     - run: python pddl_parser/action.py
     - run: python pddl_parser/PDDL.py    examples/dinner/dinner.pddl examples/dinner/pb1.pddl
     - run: python pddl_parser/planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
