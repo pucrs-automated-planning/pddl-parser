@@ -9,14 +9,20 @@ New features are outside the scope of this project, which was originally intende
 PDDL Parser was originally designed and developed by [Mau Magnaguagno](https://github.com/Maumagnaguagno) in 2015 to be used in the classroom, following [HyperTensioN](https://github.com/Maumagnaguagno/HyperTensioN)'s parsing style.
 
 ## Source
-- [action.py](action.py) with an Action class
-- [PDDL.py](PDDL.py) with a PDDL parser
-- [planner.py](planner.py) with a planner
+- [action.py](pddl_parser/action.py) with an Action class
+- [PDDL.py](pddl_parser/PDDL.py) with a PDDL parser
+- [planner.py](pddl_parser/planner.py) with a planner
 - [examples](examples/) folder with PDDL domains:
   - [Dinner](examples/dinner) from Daniel Weld, a propositional domain
   - [Blocks World](examples/blocksworld)
   - [Travelling Salesman Problem](examples/tsp)
   - [Dock Worker Robot](examples/dwr)
+
+## Installation
+```Shell
+cd pddl-parser
+python setup.py install
+```
 
 ## Execution
 The parser can be executed without planning, it outputs elements found in the input files and the structures created.
