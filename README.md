@@ -19,6 +19,9 @@ PDDL Parser was originally designed and developed by [Mau Magnaguagno](https://g
   - [Dock Worker Robot](examples/dwr)
 
 ## Installation
+The parser and planner can easily be used within other projects once installed.
+The examples should work without installation.
+
 ```Shell
 cd pddl-parser
 python setup.py install
@@ -29,7 +32,7 @@ The parser can be executed without planning, it outputs elements found in the in
 
 ```Shell
 cd pddl-parser
-python -B PDDL.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl
+python -B -m pddl_parser.PDDL examples/dinner/dinner.pddl examples/dinner/pb1.pddl
 ```
 
 <details><summary>Parser output</summary>
@@ -104,7 +107,7 @@ The output of the planner is more verbose with option ``-v``.
 
 ```Shell
 cd pddl-parser
-python -B planner.py examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
+python -B -m pddl_parser.planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
 ```
 
 <details><summary>Planner output</summary>
