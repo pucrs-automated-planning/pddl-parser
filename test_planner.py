@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import unittest
-from action import Action
-from planner import Planner
+from pddl_parser.action import Action
+from pddl_parser.planner import Planner
 
 class Test_Planner(unittest.TestCase):
 
