@@ -30,21 +30,21 @@ class Test_PDDL(unittest.TestCase):
     def test_scan_tokens_domain(self):
         parser = PDDL_Parser()
         self.assertEqual(parser.scan_tokens('examples/dinner/dinner.pddl'),
-                ['define', ['domain', 'dinner'],
-                [':requirements', ':strips'],
-                [':predicates', ['clean'], ['dinner'], ['quiet'],             ['present'], ['garbage']],
-                [':action', 'cook',
-                    ':precondition', ['clean'],
-                    ':effect', ['dinner']],
-                [':action', 'wrap',
-                    ':precondition', ['quiet'],
-                    ':effect', ['present']],
-                [':action', 'carry',
-                    ':precondition', ['garbage'],
-                    ':effect', ['and', ['not', ['garbage']],             ['not', ['clean']]]],
-                [':action', 'dolly',
-                    ':precondition', ['garbage'],
-                    ':effect', ['and', ['not', ['garbage']], ['not', ['quiet']]]]]
+            ['define', ['domain', 'dinner'],
+            [':requirements', ':strips'],
+            [':predicates', ['clean'], ['dinner'], ['quiet'], ['present'], ['garbage']],
+            [':action', 'cook',
+              ':precondition', ['clean'],
+              ':effect', ['dinner']],
+            [':action', 'wrap',
+              ':precondition', ['quiet'],
+              ':effect', ['present']],
+            [':action', 'carry',
+              ':precondition', ['garbage'],
+              ':effect', ['and', ['not', ['garbage']], ['not', ['clean']]]],
+            [':action', 'dolly',
+              ':precondition', ['garbage'],
+              ':effect', ['and', ['not', ['garbage']], ['not', ['quiet']]]]]
         )
 
     def test_scan_tokens_problem(self):
@@ -88,7 +88,7 @@ class Test_PDDL(unittest.TestCase):
         parser.parse_problem('examples/dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
         self.assertEqual(parser.objects, {})
-        self.assertEqual(parser.state, frozenset_of_tuples([['garbage'],['clean'],['quiet']]))
+        self.assertEqual(parser.state, frozenset_of_tuples([['garbage'], ['clean'], ['quiet']]))
         self.assertEqual(parser.positive_goals, frozenset_of_tuples([['dinner'], ['present']]))
         self.assertEqual(parser.negative_goals, frozenset_of_tuples([['garbage']]))
 
@@ -144,8 +144,8 @@ class Test_PDDL(unittest.TestCase):
         parser.objects = {}
         parser.parse_types(['airplane', 'segment', 'direction', 'airplanetype', 'a'])
         parser.parse_objects([
-             'b', '-', 'a',
-             'a', '-', 'a',
+            'b', '-', 'a',
+            'a', '-', 'a',
             'north', 'south', '-', 'direction',
             'light', 'medium', 'heavy', '-', 'airplanetype',
             'element1', '-', 'object',

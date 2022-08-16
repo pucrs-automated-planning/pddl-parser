@@ -20,7 +20,7 @@ PDDL Parser was originally designed and developed by [Mau Magnaguagno](https://g
 
 ## Installation
 The parser and planner can easily be used within other projects once installed.
-The examples should work without installation.
+The examples and tests should work without installation.
 
 ```Shell
 cd pddl-parser
