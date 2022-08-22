@@ -25,6 +25,7 @@ class PDDL_Parser:
         self.supported_requirements = [':strips', ':negative-preconditions', ':typing']
 
         self.warn_only_once = warn_only_once
+        self.already_warned_about = set()
 
     # -----------------------------------------------
     # Tokens
@@ -63,7 +64,7 @@ class PDDL_Parser:
     def parse_domain(self, domain_filename, ignored_requirements=None):
 
         _ignored_requirements = list() if ignored_requirements is None else ignored_requirements
-        already_warned = False
+        self.already_warned_about.clear()
 
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
@@ -91,14 +92,16 @@ class PDDL_Parser:
                     self.parse_types(group)
                 elif t == ':action':
                     self.parse_action(group)
-                else: self.parse_domain_extended(t, group, already_warned)
+                else:
+                    self.parse_domain_extended(t, group)
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
-    def parse_domain_extended(self, t, group, already_warned):
-        if self.warn_only_once and already_warned:
+    def parse_domain_extended(self, t, group):
+        if self.warn_only_once and t in self.already_warned_about:
             return
         print(str(t) + ' is not recognized in domain')
+        self.already_warned_about.add(t)
 
     # -----------------------------------------------
     # Parse hierarchy
@@ -258,6 +261,8 @@ class PDDL_Parser:
     def split_predicates(self, group, positive, negative, name, part):
         if not type(group) is list:
             raise Exception('Error with ' + name + part)
+        if len(group) == 0:
+            return
         if group[0] == 'and':
             group.pop(0)
         else:
