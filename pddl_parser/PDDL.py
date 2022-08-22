@@ -21,8 +21,10 @@ from .action import Action
 
 
 class PDDL_Parser:
+    def __init__(self, warn_only_once: bool = False) -> None:
+        self.supported_requirements = [':strips', ':negative-preconditions', ':typing']
 
-    SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
+        self.warn_only_once = warn_only_once
 
     # -----------------------------------------------
     # Tokens
@@ -58,7 +60,11 @@ class PDDL_Parser:
     # Parse domain
     # -----------------------------------------------
 
-    def parse_domain(self, domain_filename):
+    def parse_domain(self, domain_filename, ignored_requirements=None):
+
+        _ignored_requirements = list() if ignored_requirements is None else ignored_requirements
+        already_warned = False
+
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
@@ -74,7 +80,7 @@ class PDDL_Parser:
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
-                        if req not in self.SUPPORTED_REQUIREMENTS:
+                        if req not in self.supported_requirements + _ignored_requirements:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
@@ -85,11 +91,13 @@ class PDDL_Parser:
                     self.parse_types(group)
                 elif t == ':action':
                     self.parse_action(group)
-                else: self.parse_domain_extended(t, group)
+                else: self.parse_domain_extended(t, group, already_warned)
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
-    def parse_domain_extended(self, t, group):
+    def parse_domain_extended(self, t, group, already_warned):
+        if self.warn_only_once and already_warned:
+            return
         print(str(t) + ' is not recognized in domain')
 
     # -----------------------------------------------
