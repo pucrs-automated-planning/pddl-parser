@@ -250,17 +250,18 @@ class PDDL_Parser:
     def split_predicates(self, group, positive, negative, name, part):
         if not type(group) is list:
             raise Exception('Error with ' + name + part)
-        if group[0] == 'and':
-            group.pop(0)
-        else:
-            group = [group]
-        for predicate in group:
-            if predicate[0] == 'not':
-                if len(predicate) != 2:
-                    raise Exception('Unexpected not in ' + name + part)
-                negative.append(predicate[-1])
+        if group:
+            if group[0] == 'and':
+                group.pop(0)
             else:
-                positive.append(predicate)
+                group = [group]
+            for predicate in group:
+                if predicate[0] == 'not':
+                    if len(predicate) != 2:
+                        raise Exception('Unexpected not in ' + name + part)
+                    negative.append(predicate[-1])
+                else:
+                    positive.append(predicate)
 
 
 # -----------------------------------------------

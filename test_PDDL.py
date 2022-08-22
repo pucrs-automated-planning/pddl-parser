@@ -168,6 +168,34 @@ class Test_PDDL(unittest.TestCase):
             'airplane': ['airplane_CFBEG']
         })
 
+    # -----------------------------------------------
+    # Test split predicates
+    # -----------------------------------------------
+
+    def test_split_predicates(self):
+        pos_pre = ['pre', 'a']
+        neg_pre = ['not', ['pre', 'b']]
+        conjunction = ['and', pos_pre, neg_pre]
+        pos = []
+        neg = []
+        parser = PDDL_Parser()
+        self.assertRaises(Exception, parser.split_predicates, 'a', pos, neg, 'test', 'error')
+        parser.split_predicates([], pos, neg, 'test', 'empty')
+        self.assertEqual(pos, [])
+        self.assertEqual(neg, [])
+        parser.split_predicates(pos_pre, pos, neg, 'test', 'positve atomic')
+        self.assertEqual(pos, [pos_pre])
+        self.assertEqual(neg, [])
+        pos = []
+        parser.split_predicates(neg_pre, pos, neg, 'test', 'negative atomic')
+        self.assertEqual(pos, [])
+        self.assertEqual(neg, [neg_pre[-1]])
+        pos = []
+        neg = []
+        parser.split_predicates(conjunction, pos, neg, 'test', 'conjunction')
+        self.assertEqual(pos, [pos_pre])
+        self.assertEqual(neg, [neg_pre[-1]])
+
 
 # -----------------------------------------------
 # Main
