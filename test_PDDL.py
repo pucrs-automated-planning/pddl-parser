@@ -76,6 +76,12 @@ class Test_PDDL(unittest.TestCase):
             ]
         )
 
+    def test_parse_domain_with_custom_requirements(self):
+        parser = PDDL_Parser()
+        parser.parse_domain('examples/dinner/dinner.pddl', [':strips', ':custom'])
+        parser = PDDL_Parser()
+        self.assertRaises(Exception, parser.parse_domain, 'examples/dinner/dinner.pddl', [])
+
     # -----------------------------------------------
     # Test parse problem
     # -----------------------------------------------

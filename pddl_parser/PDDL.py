@@ -58,7 +58,7 @@ class PDDL_Parser:
     # Parse domain
     # -----------------------------------------------
 
-    def parse_domain(self, domain_filename):
+    def parse_domain(self, domain_filename, requirements=SUPPORTED_REQUIREMENTS):
         tokens = self.scan_tokens(domain_filename)
         if type(tokens) is list and tokens.pop(0) == 'define':
             self.domain_name = 'unknown'
@@ -74,7 +74,7 @@ class PDDL_Parser:
                     self.domain_name = group[0]
                 elif t == ':requirements':
                     for req in group:
-                        if req not in self.SUPPORTED_REQUIREMENTS:
+                        if req not in requirements:
                             raise Exception('Requirement ' + req + ' not supported')
                     self.requirements = group
                 elif t == ':constants':
