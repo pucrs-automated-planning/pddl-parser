@@ -21,7 +21,7 @@ from .action import Action
 
 
 class PDDL_Parser:
-    def __init__(self, warn_only_once: bool = False) -> None:
+    def __init__(self, warn_only_once=False):
         self.supported_requirements = [':strips', ':negative-preconditions', ':typing']
 
         self.warn_only_once = warn_only_once
