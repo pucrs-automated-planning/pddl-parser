@@ -172,7 +172,7 @@ class PDDL_Parser:
         negative_preconditions = []
         add_effects = []
         del_effects = []
-        extensions = None
+        extensions = []
         while group:
             t = group.pop(0)
             if t == ':parameters':
@@ -197,11 +197,17 @@ class PDDL_Parser:
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
                 self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
-            else: extensions = self.parse_action_extended(t, group)
-        self.actions.append(Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, extensions))
+            else:
+                group.insert(0, t)
+                extensions.append(group)
+        action = Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects)
+        self.parse_action_extended(action, extensions)
+        self.actions.append(action)
 
-    def parse_action_extended(self, t, group):
-        print(str(t) + ' is not recognized in action')
+    def parse_action_extended(self, action, group):
+        while group:
+            t = group.pop(0)
+            print(str(t) + ' is not recognized in action ' + action.name)
 
     # -----------------------------------------------
     # Parse problem

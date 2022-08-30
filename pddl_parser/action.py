@@ -25,7 +25,7 @@ class Action:
     # Initialize
     # -----------------------------------------------
 
-    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, extensions=None):
+    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
         self.name = name
