@@ -95,5 +95,4 @@ if __name__ == '__main__':
         for act in plan:
             print(act if verbose else act.name + ' ' + ' '.join(act.parameters))
     else:
-        print('No plan was found')
-        exit(1)
+        sys.exit('No plan was found')
