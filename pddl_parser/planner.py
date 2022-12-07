@@ -90,7 +90,7 @@ if __name__ == '__main__':
     planner = Planner()
     plan = planner.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
-    if type(plan) is list:
+    if plan is not None:
         print('plan:')
         for act in plan:
             print(act if verbose else act.name + ' ' + ' '.join(act.parameters))

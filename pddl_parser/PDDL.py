@@ -162,7 +162,7 @@ class PDDL_Parser:
 
     def parse_action(self, group):
         name = group.pop(0)
-        if not type(name) is str:
+        if type(name) is not str:
             raise Exception('Action without name definition')
         for act in self.actions:
             if act.name == name:
@@ -176,7 +176,7 @@ class PDDL_Parser:
         while group:
             t = group.pop(0)
             if t == ':parameters':
-                if not type(group) is list:
+                if type(group) is not list:
                     raise Exception('Error with ' + name + ' parameters')
                 parameters = []
                 untyped_parameters = []
@@ -254,7 +254,7 @@ class PDDL_Parser:
     # -----------------------------------------------
 
     def split_predicates(self, group, positive, negative, name, part):
-        if not type(group) is list:
+        if type(group) is not list:
             raise Exception('Error with ' + name + part)
         if group:
             if group[0] == 'and':
