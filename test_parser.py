@@ -25,7 +25,7 @@ class Test_PDDL(unittest.TestCase):
     # -----------------------------------------------
 
     def test_scan_tokens_domain(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         self.assertEqual(parser.scan_tokens('examples/dinner/dinner.pddl'),
             ['define', ['domain', 'dinner'],
             [':requirements', ':strips'],
@@ -45,7 +45,7 @@ class Test_PDDL(unittest.TestCase):
         )
 
     def test_scan_tokens_problem(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         self.assertEqual(parser.scan_tokens('examples/dinner/pb1.pddl'),
             ['define', ['problem', 'pb1'],
             [':domain', 'dinner'],
@@ -58,7 +58,7 @@ class Test_PDDL(unittest.TestCase):
     # -----------------------------------------------
 
     def test_parse_domain(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.parse_domain('examples/dinner/dinner.pddl')
         self.assertEqual(parser.domain_name, 'dinner')
         self.assertEqual(parser.requirements, [':strips'])
@@ -74,9 +74,9 @@ class Test_PDDL(unittest.TestCase):
         )
 
     def test_parse_domain_with_custom_requirements(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.parse_domain('examples/dinner/dinner.pddl', [':strips', ':custom'])
-        parser = PDDL_Parser()
+        parser = Parser()
         self.assertRaises(Exception, parser.parse_domain, 'examples/dinner/dinner.pddl', [])
 
     # -----------------------------------------------
@@ -86,7 +86,7 @@ class Test_PDDL(unittest.TestCase):
     def test_parse_problem(self):
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.parse_domain('examples/dinner/dinner.pddl')
         parser.parse_problem('examples/dinner/pb1.pddl')
         self.assertEqual(parser.problem_name, 'pb1')
@@ -100,7 +100,7 @@ class Test_PDDL(unittest.TestCase):
     # -----------------------------------------------
 
     def test_parse_predicates(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.predicates = {}
         parser.parse_predicates([
             ['untyped_pred', '?v1', '?v2', '?v3'],
@@ -118,13 +118,13 @@ class Test_PDDL(unittest.TestCase):
     #-----------------------------------------------
 
     def test_parse_undefined_types(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.types = {}
         parser.parse_types(['location', 'pile', 'robot', 'crane', 'container'])
         self.assertEqual(parser.types, {'object': ['location', 'pile', 'robot', 'crane', 'container']})
 
     def test_parse_defined_types(self):
-        parser = PDDL_Parser()
+        parser = Parser()
         parser.types = {}
         parser.parse_types([
             'place', 'locatable', 'level', '-', 'object',
@@ -175,7 +175,7 @@ class Test_PDDL(unittest.TestCase):
         conjunction = ['and', pos_pre, neg_pre]
         pos = []
         neg = []
-        parser = PDDL_Parser()
+        parser = Parser()
         self.assertRaises(Exception, parser.split_predicates, 'a', pos, neg, 'test', 'error')
         parser.split_predicates([], pos, neg, 'test', 'empty')
         self.assertEqual(pos, [])
