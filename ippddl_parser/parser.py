@@ -24,6 +24,18 @@ class Parser:
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
 
+    def __init__(self, domain_filename=None, problem_filename=None) -> None:
+        if domain_filename:
+            self.scan_tokens(domain_filename)
+        if problem_filename:
+            self.scan_tokens(problem_filename)
+        
+        if domain_filename:
+            self.parse_domain(domain_filename)
+        if problem_filename:
+            self.parse_problem(problem_filename)
+
+
     def scan_tokens(self, filename):
         with open(filename) as f:
             # Remove single line comments
@@ -151,6 +163,8 @@ class Parser:
             
             predicate = Predicate(predicate_name, arguments)
             self.predicates.append(predicate)
+        # Adds equality predicate by default
+        self.predicates.append(Predicate('equal', {'?x': 'object', '?y': 'object'}))
 
 
     def parse_action(self, group):
@@ -237,6 +251,7 @@ class Parser:
         else:
             raise Exception('File ' + problem_filename + ' does not match problem pattern')
 
+
     def parse_problem_extended(self, t, group):
         print(str(t) + ' is not recognized in problem')
 
@@ -281,7 +296,6 @@ if __name__ == '__main__':
     print('Negative goals: ' + str([list(i) for i in parser.negative_goals]))
     for predicate in parser.predicates:
         print(predicate)
-
 
     print(parser.action_relations)
     print(parser.predicate_relations)
