@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: pddl-parser
+Version: 1.2
+Summary: Classical Planning in Python
+Home-page: https://github.com/pucrs-automated-planning/pddl-parser
+Author: Mau Magnaguagno
+License: GPLv3
+License-File: LICENSE

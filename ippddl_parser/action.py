@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# Four spaces as indentation [no tabs]
-
 # This file is part of PDDL Parser, available at <https://github.com/pucrs-automated-planning/pddl-parser>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -35,17 +32,29 @@ class Action:
         self.add_effects = frozenset_of_tuples(add_effects)
         self.del_effects = frozenset_of_tuples(del_effects)
 
+        all_predicates = []
+        for pred in positive_preconditions:
+            all_predicates.append(pred[0])
+        for pred in negative_preconditions:
+            all_predicates.append(pred[0])
+        for pred in add_effects:
+            all_predicates.append(pred[0])
+        for pred in del_effects:
+            all_predicates.append(pred[0])
+        self.related_predicates = frozenset(all_predicates)
+
     # -----------------------------------------------
     # to String
     # -----------------------------------------------
 
     def __str__(self):
         return 'action: ' + self.name + \
-               '\n  parameters: ' + str(list(self.parameters)) + \
-               '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
-               '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
-               '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
-               '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
+                '\n  parameters: ' + str(list(self.parameters)) + \
+                '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
+                '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
+                '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
+                '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + \
+                '\n  related_predicates: ' + str([i for i in self.related_predicates]) +'\n'
 
     # -----------------------------------------------
     # Equality

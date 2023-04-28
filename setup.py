@@ -3,11 +3,11 @@
 from distutils.core import setup
 
 setup(
-    name="pddl_parser",
-    description="Classical Planning in Python",
-    version="1.2",
-    author="Mau Magnaguagno",
-    url="https://github.com/pucrs-automated-planning/pddl-parser",
-    packages=["pddl_parser"],
+    name="ippddl_parser",
+    description="Planning in Python with Imprecise Probabilities",
+    version="0.1",
+    author="André F. Moukarzel",
+    url="https://github.com/AndreMoukarzel/ippddl-parser",
+    packages=["ippddl_parser"],
     license="GPLv3"
 )

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# Four spaces as indentation [no tabs]
-
 # This file is part of PDDL Parser, available at <https://github.com/pucrs-automated-planning/pddl-parser>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,7 +17,7 @@ import re
 from .action import Action
 
 
-class PDDL_Parser:
+class Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
@@ -277,7 +274,7 @@ if __name__ == '__main__':
     import sys, pprint
     domain = sys.argv[1]
     problem = sys.argv[2]
-    parser = PDDL_Parser()
+    parser = Parser()
     print('----------------------------')
     pprint.pprint(parser.scan_tokens(domain))
     print('----------------------------')
