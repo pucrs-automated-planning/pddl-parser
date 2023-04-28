@@ -1,6 +1,6 @@
 (define (domain blocksworld)
   (:requirements :strips :negative-preconditions)
-  (:predicates (clear ?x) (onTable ?x) (holding ?x) (on ?x ?y))
+  (:predicates (clear ?x - block) (onTable ?x - block) (holding ?x - block) (on ?x ?y - block))
 
   (:action pickup
     :parameters (?ob)

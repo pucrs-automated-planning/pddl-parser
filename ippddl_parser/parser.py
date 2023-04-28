@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import re
+
+from .predicate import Predicate
 from .action import Action
 
 
@@ -63,7 +65,7 @@ class Parser:
             self.types = {}
             self.objects = {}
             self.actions = []
-            self.predicates = {}
+            self.predicates = []
             while tokens:
                 group = tokens.pop(0)
                 t = group.pop(0)
@@ -135,8 +137,9 @@ class Parser:
     def parse_predicates(self, group):
         for pred in group:
             predicate_name = pred.pop(0)
-            if predicate_name in self.predicates:
-                raise Exception('Predicate ' + predicate_name + ' redefined')
+            for predicate in self.predicates:
+                if predicate.name == predicate_name:
+                    raise Exception('Predicate ' + predicate_name + ' redefined')
             arguments = {}
             untyped_variables = []
             while pred:
@@ -151,7 +154,10 @@ class Parser:
                     untyped_variables.append(t)
             while untyped_variables:
                 arguments[untyped_variables.pop(0)] = 'object'
-            self.predicates[predicate_name] = arguments
+            
+            #self.predicates[predicate_name] = arguments
+            predicate = Predicate(predicate_name, arguments)
+            self.predicates.append(predicate)
 
     # -----------------------------------------------
     # Parse action
@@ -291,3 +297,5 @@ if __name__ == '__main__':
     print('State: ' + str([list(i) for i in parser.state]))
     print('Positive goals: ' + str([list(i) for i in parser.positive_goals]))
     print('Negative goals: ' + str([list(i) for i in parser.negative_goals]))
+    for predicate in parser.predicates:
+        print(predicate)
