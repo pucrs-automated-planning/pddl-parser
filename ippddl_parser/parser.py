@@ -85,6 +85,18 @@ class Parser:
                 elif t == ':action':
                     self.parse_action(group)
                 else: self.parse_domain_extended(t, group)
+            
+            self.action_relations = {}
+            for act in self.actions:
+                self.action_relations[act.name] = act.get_related_predicates()
+            
+            self.predicate_relations = {}
+            for predicate in self.predicates:
+                related_actions = []
+                for action, related_predicates in self.action_relations.items():
+                    if predicate.name in related_predicates:
+                        related_actions.append(action)
+                self.predicate_relations[predicate.name] = set(related_actions)
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
@@ -207,6 +219,7 @@ class Parser:
         self.parse_action_extended(action, extensions)
         self.actions.append(action)
 
+
     def parse_action_extended(self, action, group):
         while group:
             t = group.pop(0)
@@ -299,3 +312,7 @@ if __name__ == '__main__':
     print('Negative goals: ' + str([list(i) for i in parser.negative_goals]))
     for predicate in parser.predicates:
         print(predicate)
+
+
+    print(parser.action_relations)
+    print(parser.predicate_relations)
