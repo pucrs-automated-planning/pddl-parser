@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# Four spaces as indentation [no tabs]
-
 # This file is part of PDDL Parser, available at <https://github.com/pucrs-automated-planning/pddl-parser>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import unittest
-from pddl_parser.action import Action
-from pddl_parser.planner import Planner
+from ippddl_parser.action import Action
+from ippddl_parser.planner import Planner
 
 class Test_Planner(unittest.TestCase):
 
