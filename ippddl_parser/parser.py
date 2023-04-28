@@ -23,9 +23,6 @@ class Parser:
 
     SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
 
-    # -----------------------------------------------
-    # Tokens
-    # -----------------------------------------------
 
     def scan_tokens(self, filename):
         with open(filename) as f:
@@ -53,9 +50,6 @@ class Parser:
             raise Exception('Malformed expression')
         return list[0]
 
-    # -----------------------------------------------
-    # Parse domain
-    # -----------------------------------------------
 
     def parse_domain(self, domain_filename, requirements=SUPPORTED_REQUIREMENTS):
         tokens = self.scan_tokens(domain_filename)
@@ -103,9 +97,6 @@ class Parser:
     def parse_domain_extended(self, t, group):
         print(str(t) + ' is not recognized in domain')
 
-    # -----------------------------------------------
-    # Parse hierarchy
-    # -----------------------------------------------
 
     def parse_hierarchy(self, group, structure, name, redefine):
         list = []
@@ -128,23 +119,14 @@ class Parser:
                 structure['object'] = []
             structure['object'] += list
 
-    # -----------------------------------------------
-    # Parse objects
-    # -----------------------------------------------
 
     def parse_objects(self, group, name):
         self.parse_hierarchy(group, self.objects, name, False)
 
-    # -----------------------------------------------
-    # Parse types
-    # -----------------------------------------------
 
     def parse_types(self, group):
         self.parse_hierarchy(group, self.types, 'types', True)
 
-    # -----------------------------------------------
-    # Parse predicates
-    # -----------------------------------------------
 
     def parse_predicates(self, group):
         for pred in group:
@@ -167,13 +149,9 @@ class Parser:
             while untyped_variables:
                 arguments[untyped_variables.pop(0)] = 'object'
             
-            #self.predicates[predicate_name] = arguments
             predicate = Predicate(predicate_name, arguments)
             self.predicates.append(predicate)
 
-    # -----------------------------------------------
-    # Parse action
-    # -----------------------------------------------
 
     def parse_action(self, group):
         name = group.pop(0)
@@ -225,9 +203,6 @@ class Parser:
             t = group.pop(0)
             print(str(t) + ' is not recognized in action ' + action.name)
 
-    # -----------------------------------------------
-    # Parse problem
-    # -----------------------------------------------
 
     def parse_problem(self, problem_filename):
         def frozenset_of_tuples(data):
@@ -265,9 +240,6 @@ class Parser:
     def parse_problem_extended(self, t, group):
         print(str(t) + ' is not recognized in problem')
 
-    # -----------------------------------------------
-    # Split predicates
-    # -----------------------------------------------
 
     def split_predicates(self, group, positive, negative, name, part):
         if type(group) is not list:
@@ -286,9 +258,6 @@ class Parser:
                     positive.append(predicate)
 
 
-# -----------------------------------------------
-# Main
-# -----------------------------------------------
 if __name__ == '__main__':
     import sys, pprint
     domain = sys.argv[1]

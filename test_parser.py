@@ -20,10 +20,6 @@ from ippddl_parser.parser import Parser
 
 class Test_PDDL(unittest.TestCase):
 
-    # -----------------------------------------------
-    # Test scan_tokens
-    # -----------------------------------------------
-
     def test_scan_tokens_domain(self):
         parser = Parser()
         self.assertEqual(parser.scan_tokens('examples/dinner/dinner.pddl'),
@@ -53,16 +49,13 @@ class Test_PDDL(unittest.TestCase):
             [':goal', ['and', ['dinner'], ['present'], ['not', ['garbage']]]]]
         )
 
-    # -----------------------------------------------
-    # Test parse domain
-    # -----------------------------------------------
 
     def test_parse_domain(self):
         parser = Parser()
         parser.parse_domain('examples/dinner/dinner.pddl')
         self.assertEqual(parser.domain_name, 'dinner')
         self.assertEqual(parser.requirements, [':strips'])
-        self.assertEqual(parser.predicates, {'clean': {}, 'dinner': {}, 'quiet': {}, 'present': {}, 'garbage': {}})
+        self.assertEqual([pred.name for pred in parser.predicates], ['clean', 'dinner', 'quiet', 'present', 'garbage'])
         self.assertEqual(parser.types, {})
         self.assertEqual(parser.actions,
             [
@@ -79,9 +72,6 @@ class Test_PDDL(unittest.TestCase):
         parser = Parser()
         self.assertRaises(Exception, parser.parse_domain, 'examples/dinner/dinner.pddl', [])
 
-    # -----------------------------------------------
-    # Test parse problem
-    # -----------------------------------------------
 
     def test_parse_problem(self):
         def frozenset_of_tuples(data):
@@ -95,27 +85,6 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.positive_goals, frozenset_of_tuples([['dinner'], ['present']]))
         self.assertEqual(parser.negative_goals, frozenset_of_tuples([['garbage']]))
 
-    # -----------------------------------------------
-    # Test parse predicates
-    # -----------------------------------------------
-
-    def test_parse_predicates(self):
-        parser = Parser()
-        parser.predicates = {}
-        parser.parse_predicates([
-            ['untyped_pred', '?v1', '?v2', '?v3'],
-            ['typed_pred', '?v1', '-', 'type1', '?v2', '-', 'type1', '?v3', '-', 'object'],
-            ['shared_type_pred', '?v1', '?v2', '-', 'type1', '?v3']
-        ])
-        self.assertEqual(parser.predicates, {
-            'untyped_pred': {'?v1': 'object', '?v2': 'object', '?v3': 'object'},
-            'typed_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'},
-            'shared_type_pred': {'?v1': 'type1', '?v2': 'type1', '?v3': 'object'}
-        })
-
-    #-----------------------------------------------
-    # Test parse types
-    #-----------------------------------------------
 
     def test_parse_undefined_types(self):
         parser = Parser()
@@ -137,9 +106,6 @@ class Test_PDDL(unittest.TestCase):
             'locatable': ['truck', 'goods']
         })
 
-    #-----------------------------------------------
-    # Test objects
-    #-----------------------------------------------
 
     def test_parse_objects(self):
         parser = Parser()
@@ -165,9 +131,6 @@ class Test_PDDL(unittest.TestCase):
             'airplane': ['airplane_CFBEG']
         })
 
-    # -----------------------------------------------
-    # Test split predicates
-    # -----------------------------------------------
 
     def test_split_predicates(self):
         pos_pre = ['pre', 'a']
@@ -194,8 +157,6 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(neg, [neg_pre[-1]])
 
 
-# -----------------------------------------------
-# Main
-# -----------------------------------------------
+
 if __name__ == '__main__':
     unittest.main()

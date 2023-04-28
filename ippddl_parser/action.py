@@ -18,10 +18,6 @@ import itertools
 
 class Action:
 
-    # -----------------------------------------------
-    # Initialize
-    # -----------------------------------------------
-
     def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
@@ -32,9 +28,6 @@ class Action:
         self.add_effects = frozenset_of_tuples(add_effects)
         self.del_effects = frozenset_of_tuples(del_effects)
 
-    # -----------------------------------------------
-    # to String
-    # -----------------------------------------------
 
     def __str__(self):
         return 'action: ' + self.name + \
@@ -44,16 +37,10 @@ class Action:
                 '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
                 '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
 
-    # -----------------------------------------------
-    # Equality
-    # -----------------------------------------------
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    # -----------------------------------------------
-    # Groundify
-    # -----------------------------------------------
 
     def groundify(self, objects, types):
         if not self.parameters:
@@ -79,9 +66,6 @@ class Action:
             del_effects = self.replace(self.del_effects, variables, assignment)
             yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects)
 
-    # -----------------------------------------------
-    # Replace
-    # -----------------------------------------------
 
     def replace(self, group, variables, assignment):
         new_group = []
@@ -107,9 +91,7 @@ class Action:
         return set(all_predicates)
 
 
-# -----------------------------------------------
-# Main
-# -----------------------------------------------
+
 if __name__ == '__main__':
     a = Action('move', [['?ag', 'agent'], ['?from', 'pos'], ['?to', 'pos']],
                        [['at', '?ag', '?from'], ['adjacent', '?from', '?to']],
