@@ -13,7 +13,7 @@ The [PDDL Parser](https://github.com/pucrs-automated-planning/pddl-parser) this 
 
 ## Source
 - [action.py](ippddl_parser/action.py) with an Action class
-- [action.py](ippddl_parser/predicate.py) with an Predicate class
+- [predicate.py](ippddl_parser/predicate.py) with an Predicate class
 - [parser.py](ippddl_parser/parser.py) with an IPPDDL parser
 - [planner.py](ippddl_parser/planner.py) with a non-probabilistic planner
 - [examples](examples/) folder with PDDL, PPDDL and IPPDDL domains:
