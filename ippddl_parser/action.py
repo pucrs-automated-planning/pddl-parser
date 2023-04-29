@@ -46,8 +46,8 @@ class Action:
             '\n  effects:'
         for i, prob in enumerate(self.effect_probabilities):
             return_str += f'\n\t{prob}' + \
-                f'\n\t  {str([list(eff) for eff in self.add_effects[i]])}' + \
-                f'\n\t  {str([list(eff) for eff in self.del_effects[i]])}'
+                f'\n\t  positive effects: {str([list(eff) for eff in self.add_effects[i]])}' + \
+                f'\n\t  negative effects: {str([list(eff) for eff in self.del_effects[i]])}'
         return return_str + '\n'
 
 

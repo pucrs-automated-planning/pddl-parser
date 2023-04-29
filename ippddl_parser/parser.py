@@ -316,8 +316,3 @@ if __name__ == '__main__':
     print('State: ' + str([list(i) for i in parser.state]))
     print('Positive goals: ' + str([list(i) for i in parser.positive_goals]))
     print('Negative goals: ' + str([list(i) for i in parser.negative_goals]))
-    for predicate in parser.predicates:
-        print(predicate)
-
-    print(parser.action_relations)
-    print(parser.predicate_relations)
