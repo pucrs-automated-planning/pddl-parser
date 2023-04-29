@@ -21,7 +21,10 @@ from .action import Action
 
 class Parser:
 
-    SUPPORTED_REQUIREMENTS = [':strips', ':negative-preconditions', ':typing']
+    SUPPORTED_REQUIREMENTS = [
+        ':strips', ':negative-preconditions', ':typing', ':equality',
+        ':probabilistic-effects', ':conditional-effects', ':rewards'
+    ]
 
 
     def __init__(self, domain_filename=None, problem_filename=None) -> None:
@@ -91,6 +94,10 @@ class Parser:
                 elif t == ':action':
                     self.parse_action(group)
                 else: self.parse_domain_extended(t, group)
+            
+            if ':equality' == self.requirements:
+                # Adds equality predicate by default
+                self.predicates.append(Predicate('equal', {'?x': 'object', '?y': 'object'}))
             
             self.action_relations = {}
             for act in self.actions:
@@ -163,8 +170,6 @@ class Parser:
             
             predicate = Predicate(predicate_name, arguments)
             self.predicates.append(predicate)
-        # Adds equality predicate by default
-        self.predicates.append(Predicate('equal', {'?x': 'object', '?y': 'object'}))
 
 
     def parse_action(self, group):
@@ -177,9 +182,9 @@ class Parser:
         parameters = []
         positive_preconditions = []
         negative_preconditions = []
+        extensions = []
         add_effects = []
         del_effects = []
-        extensions = []
         while group:
             t = group.pop(0)
             if t == ':parameters':
@@ -203,10 +208,27 @@ class Parser:
             elif t == ':precondition':
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
-                self.split_predicates(group.pop(0), add_effects, del_effects, name, ' effects')
+                effects: str = group.pop(0)
+                if effects[0] == 'probabilistic':
+                    prob_effects = effects[1:]
+                    for i in range(0, len(prob_effects), 2):
+                        prob = prob_effects[i]
+                        this_effects = prob_effects[i + 1]
+                        this_add_effects = []
+                        this_del_effects = []
+                        self.split_predicates(this_effects, this_add_effects, this_del_effects, name, ' effects')
+
+                        add_effects.append((prob, this_add_effects))
+                        del_effects.append((prob, this_del_effects))
+                else:
+                    # When the action is deterministic, we hardset its probability of happening to 100%
+                    self.split_predicates(effects, add_effects, del_effects, name, ' effects')
+                    add_effects = [(1, add_effects)]
+                    del_effects = [(1, del_effects)]
             else:
                 group.insert(0, t)
                 extensions.append(group)
+        
         action = Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects)
         self.parse_action_extended(action, extensions)
         self.actions.append(action)

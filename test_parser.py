@@ -59,10 +59,10 @@ class Test_PDDL(unittest.TestCase):
         self.assertEqual(parser.types, {})
         self.assertEqual(parser.actions,
             [
-                Action('cook', [], [['clean']], [], [['dinner']], []),
-                Action('wrap', [], [['quiet']], [], [['present']], []),
-                Action('carry', [], [['garbage']], [], [], [['garbage'], ['clean']]),
-                Action('dolly', [], [['garbage']], [], [], [['garbage'], ['quiet']])
+                Action('cook', [], [['clean']], [], [(1, [['dinner']])], [(1, [])]),
+                Action('wrap', [], [['quiet']], [], [(1, [['present']])], [(1, [])]),
+                Action('carry', [], [['garbage']], [], [(1, [])], [(1, [['garbage'], ['clean']])]),
+                Action('dolly', [], [['garbage']], [], [(1,[])], [(1, [['garbage'], ['quiet']])])
             ]
         )
 

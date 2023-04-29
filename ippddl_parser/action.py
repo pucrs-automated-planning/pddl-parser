@@ -18,24 +18,37 @@ import itertools
 
 class Action:
 
-    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects):
+    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, prob_add_effects, prob_del_effects):
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
         self.name = name
         self.parameters = tuple(parameters)  # Make parameters a tuple so we can hash this if need be
         self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
         self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
-        self.add_effects = frozenset_of_tuples(add_effects)
-        self.del_effects = frozenset_of_tuples(del_effects)
+
+        self.effect_probabilities = []
+        self.add_effects = []
+        self.del_effects = []
+        for i in range(len(prob_add_effects)):
+            prob = prob_add_effects[i][0]
+            this_add_effects = frozenset_of_tuples(prob_add_effects[i][1])
+            this_del_effects = frozenset_of_tuples(prob_del_effects[i][1])
+            self.effect_probabilities.append(prob)
+            self.add_effects.append(this_add_effects)
+            self.del_effects.append(this_del_effects)
 
 
     def __str__(self):
-        return 'action: ' + self.name + \
-                '\n  parameters: ' + str(list(self.parameters)) + \
-                '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
-                '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
-                '\n  add_effects: ' + str([list(i) for i in self.add_effects]) + \
-                '\n  del_effects: ' + str([list(i) for i in self.del_effects]) + '\n'
+        return_str = 'action: ' + self.name + \
+            '\n  parameters: ' + str(list(self.parameters)) + \
+            '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
+            '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
+            '\n  effects:'
+        for i, prob in enumerate(self.effect_probabilities):
+            return_str += f'\n\t{prob}' + \
+                f'\n\t  {str([list(eff) for eff in self.add_effects[i]])}' + \
+                f'\n\t  {str([list(eff) for eff in self.del_effects[i]])}'
+        return return_str + '\n'
 
 
     def __eq__(self, other):
@@ -84,10 +97,12 @@ class Action:
             all_predicates.append(pred[0])
         for pred in self.negative_preconditions:
             all_predicates.append(pred[0])
-        for pred in self.add_effects:
-            all_predicates.append(pred[0])
-        for pred in self.del_effects:
-            all_predicates.append(pred[0])
+        for prop_effect in self.add_effects:
+            for pred in prop_effect:
+                all_predicates.append(pred[0])
+        for prop_effect in self.del_effects:
+            for pred in prop_effect:
+                all_predicates.append(pred[0])
         return set(all_predicates)
 
 
