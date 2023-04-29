@@ -22,8 +22,7 @@ from .action import Action
 class Parser:
 
     SUPPORTED_REQUIREMENTS = [
-        ':strips', ':negative-preconditions', ':typing', ':equality',
-        ':probabilistic-effects', ':conditional-effects', ':rewards'
+        ':strips', ':negative-preconditions', ':typing', ':equality', ':rewards'
     ]
 
 
@@ -170,6 +169,55 @@ class Parser:
             
             predicate = Predicate(predicate_name, arguments)
             self.predicates.append(predicate)
+    
+
+    def parse_action_parameters(self, unparsed_parameters, action_name):
+        parameters = []
+        untyped_parameters = []
+        while unparsed_parameters:
+            t = unparsed_parameters.pop(0)
+            if t == '-':
+                if not untyped_parameters:
+                    raise Exception('Unexpected hyphen in ' + action_name + ' parameters')
+                ptype = unparsed_parameters.pop(0)
+                while untyped_parameters:
+                    parameters.append([untyped_parameters.pop(0), ptype])
+            else:
+                untyped_parameters.append(t)
+        while untyped_parameters:
+            parameters.append([untyped_parameters.pop(0), 'object'])
+        
+        return parameters
+
+
+    def parse_action_effects(self, effects, action_name):
+        """Parses the effects of an action.
+
+        The base parser is used in deterministic problems, and therefore all
+        actions are assumed to have only one possible outcome with add and del
+        effects
+        """
+        add_effects = []
+        del_effects = []
+
+        if effects[0] == 'probabilistic':
+            prob_effects = effects[1:]
+            for i in range(0, len(prob_effects), 2):
+                prob = prob_effects[i]
+                this_effects = prob_effects[i + 1]
+                this_add_effects = []
+                this_del_effects = []
+                self.split_predicates(this_effects, this_add_effects, this_del_effects, action_name, ' effects')
+
+                add_effects.append((prob, this_add_effects))
+                del_effects.append((prob, this_del_effects))
+        else:
+            # Since the action is deterministic, we hardset its probability of happening to 100%
+            self.split_predicates(effects, add_effects, del_effects, action_name, ' effects')
+            add_effects = [(1, add_effects)]
+            del_effects = [(1, del_effects)]
+        
+        return add_effects, del_effects
 
 
     def parse_action(self, group):
@@ -190,41 +238,13 @@ class Parser:
             if t == ':parameters':
                 if type(group) is not list:
                     raise Exception('Error with ' + name + ' parameters')
-                parameters = []
-                untyped_parameters = []
-                p = group.pop(0)
-                while p:
-                    t = p.pop(0)
-                    if t == '-':
-                        if not untyped_parameters:
-                            raise Exception('Unexpected hyphen in ' + name + ' parameters')
-                        ptype = p.pop(0)
-                        while untyped_parameters:
-                            parameters.append([untyped_parameters.pop(0), ptype])
-                    else:
-                        untyped_parameters.append(t)
-                while untyped_parameters:
-                    parameters.append([untyped_parameters.pop(0), 'object'])
+                unparsed_parameters = group.pop(0)
+                parameters = self.parse_action_parameters(unparsed_parameters, name)
             elif t == ':precondition':
                 self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
             elif t == ':effect':
                 effects: str = group.pop(0)
-                if effects[0] == 'probabilistic':
-                    prob_effects = effects[1:]
-                    for i in range(0, len(prob_effects), 2):
-                        prob = prob_effects[i]
-                        this_effects = prob_effects[i + 1]
-                        this_add_effects = []
-                        this_del_effects = []
-                        self.split_predicates(this_effects, this_add_effects, this_del_effects, name, ' effects')
-
-                        add_effects.append((prob, this_add_effects))
-                        del_effects.append((prob, this_del_effects))
-                else:
-                    # When the action is deterministic, we hardset its probability of happening to 100%
-                    self.split_predicates(effects, add_effects, del_effects, name, ' effects')
-                    add_effects = [(1, add_effects)]
-                    del_effects = [(1, del_effects)]
+                add_effects, del_effects = self.parse_action_effects(effects, name)
             else:
                 group.insert(0, t)
                 extensions.append(group)
