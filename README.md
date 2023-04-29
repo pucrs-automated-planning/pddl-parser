@@ -14,7 +14,8 @@ The [PDDL Parser](https://github.com/pucrs-automated-planning/pddl-parser) this 
 ## Source
 - [action.py](ippddl_parser/action.py) with an Action class
 - [predicate.py](ippddl_parser/predicate.py) with an Predicate class
-- [parser.py](ippddl_parser/parser.py) with an IPPDDL parser
+- [parser.py](ippddl_parser/parser.py) with a basic PDDL parser
+- [probabilistic_parser.py](ippddl_parser/probabilistic_parser.py) with an IPPDDL parser, inheriting core functionalities from the base parser above.
 - [planner.py](ippddl_parser/planner.py) with a non-probabilistic planner
 - [examples](examples/) folder with PDDL, PPDDL and IPPDDL domains:
   - [Dinner](examples/dinner) from Daniel Weld, a propositional domain
@@ -33,14 +34,21 @@ pip install -e .
 ```
 
 ## Execution
-The parser can be executed without planning, it outputs elements found in the input files and the structures created.
+The parsers can be executed without planning, it outputs elements found in the input files and the structures created.
 
 ```Shell
-cd pddl-parser
+cd ippddl-parser
+python -B -m ippddl_parser.probabilistic_parser examples/probabilistic_blocksworld/domain.pddl examples/probabilistic_blocksworld/10blocks.pddl
+```
+
+If desired, it is possible to use the base parser for deterministic problems.
+
+```Shell
+cd ippddl-parser
 python -B -m ippddl_parser.parser examples/dinner/dinner.pddl examples/dinner/pb1.pddl
 ```
 
-<details><summary>Parser output</summary>
+<details><summary>Parser output for Dinner example problem</summary>
 
 ```Shell
 ----------------------------
@@ -119,8 +127,8 @@ The planner uses BFS, it outputs the time taken and signatures of the actions in
 The output of the planner is more verbose with option ``-v``.
 
 ```Shell
-cd pddl-parser
-python -B -m pddl_parser.planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
+cd ippddl-parser
+python -B -m ippddl_parser.planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
 ```
 
 <details><summary>Planner output</summary>
@@ -152,5 +160,5 @@ action: carry
 </details>
 
 ## Extensions
-New parser features should be added through inheritance using ``super`` and ``parse_*_extended`` methods.
+New parser features should be added through inheritance using ``super()`` and ``parse_*_extended`` methods.
 The Action class may also require modifications to deal with possible extensions.

@@ -1,26 +1,12 @@
-# This file is part of PDDL Parser, available at <https://github.com/pucrs-automated-planning/pddl-parser>.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
+# This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
 from .parser import Parser
 
 
 class Planner:
-
-    # -----------------------------------------------
-    # Solve
-    # -----------------------------------------------
+    """ Planner that uses breadth-first search (BFS) to reach the goal states of
+    a deterministic problem.
+    """
 
     def solve(self, domain, problem):
         # Parser
@@ -60,24 +46,22 @@ class Planner:
                         fringe.append((act, plan))
         return None
 
-    # -----------------------------------------------
-    # Applicable
-    # -----------------------------------------------
 
     def applicable(self, state, positive, negative):
         return positive.issubset(state) and negative.isdisjoint(state)
 
-    # -----------------------------------------------
-    # Apply
-    # -----------------------------------------------
 
     def apply(self, state, positive, negative):
-        return state.difference(negative).union(positive)
+        """Applies the positive and negative effects to a state.
+
+        Since we only deal with deterministic problems here, we know the effects
+        will only have one element, representing the deterministic effects that
+        will happen with 100% probability.
+        """
+        return state.difference(negative[0]).union(positive[0])
 
 
-# -----------------------------------------------
-# Main
-# -----------------------------------------------
+
 if __name__ == '__main__':
     import sys, time
     start_time = time.time()
