@@ -75,8 +75,8 @@ class Action:
         for assignment in itertools.product(*type_map):
             positive_preconditions = self.replace(self.positive_preconditions, variables, assignment)
             negative_preconditions = self.replace(self.negative_preconditions, variables, assignment)
-            add_effects = self.replace(self.add_effects, variables, assignment)
-            del_effects = self.replace(self.del_effects, variables, assignment)
+            add_effects = self.replace_effects(self.add_effects, variables, assignment)
+            del_effects = self.replace_effects(self.del_effects, variables, assignment)
             yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects)
 
 
@@ -89,6 +89,16 @@ class Action:
                     pred[i] = assignment[variables.index(p)]
             new_group.append(pred)
         return new_group
+
+
+    def replace_effects(self, effects, variables, assignment):
+        new_effects = []
+        for i, eff in enumerate(effects):
+            prob = self.effect_probabilities[i]
+            replaced_eff = self.replace(eff, variables, assignment)
+            # Removes repetitions from replaced effects
+            new_effects.append((prob, replaced_eff))
+        return new_effects
     
 
     def get_related_predicates(self) -> set:
@@ -111,8 +121,8 @@ if __name__ == '__main__':
     a = Action('move', [['?ag', 'agent'], ['?from', 'pos'], ['?to', 'pos']],
                        [['at', '?ag', '?from'], ['adjacent', '?from', '?to']],
                        [['at', '?ag', '?to']],
-                       [['at', '?ag', '?to']],
-                       [['at', '?ag', '?from']])
+                       [(1, [['at', '?ag', '?to']])],
+                       [(1, [['at', '?ag', '?from']])])
     print(a)
 
     objects = {
