@@ -1,4 +1,5 @@
-from .action import Action
+# This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
+
 from .parser import Parser
 
 

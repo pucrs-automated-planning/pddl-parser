@@ -1,3 +1,4 @@
+# This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
 class Predicate:
 
