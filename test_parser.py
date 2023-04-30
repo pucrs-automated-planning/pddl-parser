@@ -5,7 +5,7 @@ from ippddl_parser.action import Action
 from ippddl_parser.parser import Parser
 
 
-class Test_PDDL(unittest.TestCase):
+class TestParser(unittest.TestCase):
 
     def test_scan_tokens_domain(self):
         parser = Parser()

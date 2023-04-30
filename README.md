@@ -38,14 +38,14 @@ The parsers can be executed without planning, it outputs elements found in the i
 
 ```Shell
 cd ippddl-parser
-python -B -m ippddl_parser.probabilistic_parser examples/probabilistic_blocksworld/domain.pddl examples/probabilistic_blocksworld/10blocks.pddl
+python -B -m ippddl_parser.parser examples/probabilistic_blocksworld/domain.pddl examples/probabilistic_blocksworld/10blocks.pddl
 ```
 
-If desired, it is possible to use the base parser for deterministic problems.
+If desired, it is possible to use the base deterministic parser for deterministic problems.
 
 ```Shell
 cd ippddl-parser
-python -B -m ippddl_parser.parser examples/dinner/dinner.pddl examples/dinner/pb1.pddl
+python -B -m ippddl_parser.deterministic_parser examples/dinner/dinner.pddl examples/dinner/pb1.pddl
 ```
 
 <details><summary>Parser output for Dinner example problem</summary>
@@ -128,7 +128,7 @@ The output of the planner is more verbose with option ``-v``.
 
 ```Shell
 cd ippddl-parser
-python -B -m ippddl_parser.planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
+python -B -m ippddl_parser.deterministic_planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl -v
 ```
 
 <details><summary>Planner output</summary>

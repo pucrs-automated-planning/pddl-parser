@@ -1,16 +1,16 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
-from .parser import Parser
+from .deterministic_parser import DeterministicParser
 
 
-class Planner:
+class DeterministicPlanner:
     """ Planner that uses breadth-first search (BFS) to reach the goal states of
     a deterministic problem.
     """
 
     def solve(self, domain, problem):
         # Parser
-        parser = Parser()
+        parser = DeterministicParser()
         parser.parse_domain(domain)
         parser.parse_problem(problem)
         # Parsed data
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     domain = sys.argv[1]
     problem = sys.argv[2]
     verbose = len(sys.argv) > 3 and sys.argv[3] == '-v'
-    planner = Planner()
+    planner = DeterministicPlanner()
     plan = planner.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
     if plan is not None:

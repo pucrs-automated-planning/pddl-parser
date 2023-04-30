@@ -4,7 +4,7 @@ import unittest
 from ippddl_parser.action import Action
 from ippddl_parser.planner import Planner
 
-class Test_Planner(unittest.TestCase):
+class TestPlanner(unittest.TestCase):
 
     def test_solve_dinner(self):
         planner = Planner()
