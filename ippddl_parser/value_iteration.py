@@ -1,5 +1,6 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 from typing import Dict
+from fractions import Fraction
 
 from .parser import Parser
 
@@ -8,9 +9,9 @@ class ValueIterator:
     """Object that executes value iteration on a probabilistic planning problem
     that can be represented as an MDP.
     """
-    GAMMA: float = 0.5
+    GAMMA: float = 0.1
 
-    def solve(self, domain, problem, max_diff: float=0.05):
+    def solve(self, domain, problem, max_diff: float=0.05, iter_limit: int = 500):
         # Parser
         parser = Parser()
         parser.parse_domain(domain)
@@ -31,9 +32,10 @@ class ValueIterator:
         state_vals: Dict[str, float] = {} # Value dict of states
         for state in all_states:
             # Initialize all states with value zero (could be a random value too!)
-            state_vals[state] = 0
+            state_vals[state] = 0.0
 
-        while max_iter_diff > max_diff:
+        iter_num: int = 0
+        while max_iter_diff > max_diff and iter_num < iter_limit:
             max_iter_diff = 0.0
 
             for state, state_val in state_vals.items():
@@ -41,11 +43,16 @@ class ValueIterator:
                     if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
                         # "Future" states are the s', the states reached by applying the action to current state s 
                         future_states = self.apply(state, act.add_effects, act.del_effects)
-                        future_state_val = max([self.state_value(fut_state, goal_pos, goal_neg) for fut_state in future_states])
-                        new_state_val = state_val + self.GAMMA * future_state_val
+                        future_state_vals = []
+                        for i, fut_state in enumerate(future_states):
+                            state_prob = Fraction(act.probabilities[i])
+                            fut_state_val = state_vals[fut_state] * state_prob
+                            future_state_vals.append(fut_state_val)
+                        new_state_val = self.state_reward(state, goal_pos, goal_neg) + self.GAMMA * max(future_state_vals)
 
+                        max_iter_diff = max(max_iter_diff, abs(new_state_val - state_val))
                         state_vals[state] = new_state_val
-                        max_iter_diff = max(max_iter_diff, abs(future_state_val))
+            iter_num += 1
         
         return state_vals
 
@@ -55,15 +62,20 @@ class ValueIterator:
         return positive.issubset(state) and negative.isdisjoint(state)
 
 
-    def apply(self, state, positive, negative):
+    def apply(self, state, positive, negative) -> list:
         """Applies all the possible positive and negative effects to a state,
         returning a list of the possible resulting states and their probabilities.
         """
-        print(negative)
-        return state.difference(negative[0]).union(positive[0])
+        resulting_states = []
+        for i in range(len(positive)):
+            pos_effects = positive[i]
+            neg_effects = negative[i]
+            new_state = state.difference(neg_effects).union(pos_effects)
+            resulting_states.append(new_state)
+        return resulting_states
     
 
-    def state_value(self, state, goal_pos, goal_neg) -> float:
+    def state_reward(self, state, goal_pos, goal_neg) -> float:
         if self.applicable(state, goal_pos, goal_neg):
             # Is a goal state
             return 1.0
@@ -80,10 +92,11 @@ class ValueIterator:
             state = fringe.pop(0)
             for act in ground_actions:
                 if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
-                    new_state = self.apply(state, act.add_effects, act.del_effects)
-                    if new_state not in visited:
-                        visited.add(new_state)
-                        fringe.append(new_state)
+                    possible_new_states = self.apply(state, act.add_effects, act.del_effects)
+                    for new_state in possible_new_states:
+                        if new_state not in visited:
+                            visited.add(new_state)
+                            fringe.append(new_state)
         return visited
 
 
