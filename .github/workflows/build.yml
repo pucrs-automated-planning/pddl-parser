@@ -16,8 +16,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     # Tests
     - run: python test_parser.py
-    #- run: python test_planner.py
+    - run: python test_planner.py
     # Examples
     - run: python ippddl_parser/action.py
     - run: python -m ippddl_parser.parser examples/dinner/dinner.pddl examples/dinner/pb1.pddl
-    #- run: python -m ippddl_parser.planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl
+    - run: python -m ippddl_parser.deterministic_planner examples/dinner/dinner.pddl examples/dinner/pb1.pddl
