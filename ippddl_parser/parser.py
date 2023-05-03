@@ -1,6 +1,7 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
 from .deterministic_parser import DeterministicParser
+from .action import Action
 
 
 class Parser(DeterministicParser):
@@ -17,6 +18,7 @@ class Parser(DeterministicParser):
     def parse_probabilistic_effect(self, probabilistic_effects, action_name):
         add_effects = []
         del_effects = []
+        probabilities = []
 
         for i in range(0, len(probabilistic_effects), 2):
             prob = probabilistic_effects[i]
@@ -25,10 +27,11 @@ class Parser(DeterministicParser):
             this_del_effects = []
             self.split_predicates(this_effects, this_add_effects, this_del_effects, action_name, ' effects')
 
-            add_effects.append((prob, this_add_effects))
-            del_effects.append((prob, this_del_effects))
+            add_effects.append(this_add_effects)
+            del_effects.append(this_del_effects)
+            probabilities.append(prob)
         
-        return add_effects, del_effects
+        return add_effects, del_effects, probabilities
 
 
     def parse_action_effects(self, effects, action_name):
@@ -40,17 +43,54 @@ class Parser(DeterministicParser):
         """
         add_effects = []
         del_effects = []
+        probabilities = []
 
         if effects[0] == 'probabilistic':
             prob_effects = effects[1:]
-            add_effects, del_effects = self.parse_probabilistic_effect(prob_effects, action_name)
+            add_effects, del_effects, probabilities = self.parse_probabilistic_effect(prob_effects, action_name)
         else:
             # When the action is deterministic, we hardset its probability of happening to 100%
             self.split_predicates(effects, add_effects, del_effects, action_name, ' effects')
-            add_effects = [(1, add_effects)]
-            del_effects = [(1, del_effects)]
+            add_effects = [add_effects]
+            del_effects = [del_effects]
+            probabilities = [1.0]
         
-        return add_effects, del_effects
+        return add_effects, del_effects, probabilities
+    
+
+    def parse_action(self, group):
+        name = group.pop(0)
+        if type(name) is not str:
+            raise Exception('Action without name definition')
+        for act in self.actions:
+            if act.name == name:
+                raise Exception('Action ' + name + ' redefined')
+        parameters = []
+        positive_preconditions = []
+        negative_preconditions = []
+        extensions = []
+        add_effects = []
+        del_effects = []
+        probs = []
+        while group:
+            t = group.pop(0)
+            if t == ':parameters':
+                if type(group) is not list:
+                    raise Exception('Error with ' + name + ' parameters')
+                unparsed_parameters = group.pop(0)
+                parameters = self.parse_action_parameters(unparsed_parameters, name)
+            elif t == ':precondition':
+                self.split_predicates(group.pop(0), positive_preconditions, negative_preconditions, name, ' preconditions')
+            elif t == ':effect':
+                effects: str = group.pop(0)
+                add_effects, del_effects, probs = self.parse_action_effects(effects, name)
+            else:
+                group.insert(0, t)
+                extensions.append(group)
+        
+        action = Action(name, parameters, positive_preconditions, negative_preconditions, add_effects, del_effects, probs)
+        self.parse_action_extended(action, extensions)
+        self.actions.append(action)
 
 
 if __name__ == '__main__':

@@ -1,28 +1,56 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
 import itertools
+from typing import List
 
 
 class Action:
+    """Action with probabilistic effects
+    """
 
-    def __init__(self, name, parameters, positive_preconditions, negative_preconditions, prob_add_effects, prob_del_effects):
+    def __init__(
+            self,
+            name: str,
+            parameters,
+            positive_preconditions,
+            negative_preconditions,
+            add_effects,
+            del_effects,
+            probabilities: List[float]=[]
+        ) -> None:
+        """Instantiates an Action
+
+        Parameters
+        ----------
+        name: str
+            Identifier of the Action
+        parameters
+
+        positive_preconditions
+
+        negative_preconditions
+
+        add_effects
+
+        del_effects
+
+        probabilities: List[float], optional
+            Probability of each of the listed add_effects and del_effects pairs
+            to occur. If not specified, assumes the action is deterministic and
+            therefore all probabilities are 1.0
+        """
         def frozenset_of_tuples(data):
             return frozenset([tuple(t) for t in data])
         self.name = name
         self.parameters = tuple(parameters)  # Make parameters a tuple so we can hash this if need be
         self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
         self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
-
-        self.effect_probabilities = []
-        self.add_effects = []
-        self.del_effects = []
-        for i in range(len(prob_add_effects)):
-            prob = prob_add_effects[i][0]
-            this_add_effects = frozenset_of_tuples(prob_add_effects[i][1])
-            this_del_effects = frozenset_of_tuples(prob_del_effects[i][1])
-            self.effect_probabilities.append(prob)
-            self.add_effects.append(this_add_effects)
-            self.del_effects.append(this_del_effects)
+        self.add_effects = [frozenset_of_tuples(add_effs) for add_effs in add_effects]
+        self.del_effects = [frozenset_of_tuples(del_effs) for del_effs in del_effects]
+        self.probabilities = probabilities
+        if len(probabilities) == 0:
+            # Assumes action is deterministic and set all effects to have 100% chance of occuring.
+            self.probabilities = [1.0 for _ in add_effects]
 
 
     def __str__(self):
@@ -31,7 +59,7 @@ class Action:
             '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
             '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
             '\n  effects:'
-        for i, prob in enumerate(self.effect_probabilities):
+        for i, prob in enumerate(self.probabilities):
             return_str += f'\n\t{prob}' + \
                 f'\n\t  positive effects: {str([list(eff) for eff in self.add_effects[i]])}' + \
                 f'\n\t  negative effects: {str([list(eff) for eff in self.del_effects[i]])}'
@@ -62,9 +90,9 @@ class Action:
         for assignment in itertools.product(*type_map):
             positive_preconditions = self.replace(self.positive_preconditions, variables, assignment)
             negative_preconditions = self.replace(self.negative_preconditions, variables, assignment)
-            add_effects = self.replace_effects(self.add_effects, variables, assignment)
-            del_effects = self.replace_effects(self.del_effects, variables, assignment)
-            yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects)
+            add_effects, probs = self.replace_effects(self.add_effects, variables, assignment)
+            del_effects = self.replace(self.del_effects, variables, assignment)
+            yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects, probs)
 
 
     def replace(self, group, variables, assignment):
@@ -80,12 +108,13 @@ class Action:
 
     def replace_effects(self, effects, variables, assignment):
         new_effects = []
+        related_probabilities = []
         for i, eff in enumerate(effects):
-            prob = self.effect_probabilities[i]
+            prob = self.probabilities[i]
             replaced_eff = self.replace(eff, variables, assignment)
-            # Removes repetitions from replaced effects
-            new_effects.append((prob, replaced_eff))
-        return new_effects
+            new_effects.append(replaced_eff)
+            related_probabilities.append(prob)
+        return new_effects, related_probabilities
     
 
     def get_related_predicates(self) -> set:
@@ -108,10 +137,12 @@ if __name__ == '__main__':
     a = Action('move', [['?ag', 'agent'], ['?from', 'pos'], ['?to', 'pos']],
                        [['at', '?ag', '?from'], ['adjacent', '?from', '?to']],
                        [['at', '?ag', '?to']],
-                       [(1, [['at', '?ag', '?to']])],
-                       [(1, [['at', '?ag', '?from']])])
+                       [[['at', '?ag', '?to']]],
+                       [[['at', '?ag', '?from']]])
     print(a)
+    print("Related predicates: ", a.get_related_predicates())
 
+    print("\n\n---------- Groundified ----------\n")
     objects = {
         'agent': ['ana', 'bob'],
         'pos': ['p1', 'p2']
