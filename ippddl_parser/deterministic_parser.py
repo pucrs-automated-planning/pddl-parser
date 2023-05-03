@@ -187,22 +187,10 @@ class DeterministicParser:
         add_effects = []
         del_effects = []
 
-        if effects[0] == 'probabilistic':
-            prob_effects = effects[1:]
-            for i in range(0, len(prob_effects), 2):
-                prob = prob_effects[i]
-                this_effects = prob_effects[i + 1]
-                this_add_effects = []
-                this_del_effects = []
-                self.split_predicates(this_effects, this_add_effects, this_del_effects, action_name, ' effects')
-
-                add_effects.append((prob, this_add_effects))
-                del_effects.append((prob, this_del_effects))
-        else:
-            # Since the action is deterministic, we hardset its probability of happening to 100%
-            self.split_predicates(effects, add_effects, del_effects, action_name, ' effects')
-            add_effects = [(1, add_effects)]
-            del_effects = [(1, del_effects)]
+        # Since the action is deterministic, we hardset its probability of happening to 100%
+        self.split_predicates(effects, add_effects, del_effects, action_name, ' effects')
+        add_effects = [add_effects]
+        del_effects = [del_effects]
         
         return add_effects, del_effects
 
