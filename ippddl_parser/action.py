@@ -91,7 +91,7 @@ class Action:
             positive_preconditions = self.replace(self.positive_preconditions, variables, assignment)
             negative_preconditions = self.replace(self.negative_preconditions, variables, assignment)
             add_effects, probs = self.replace_effects(self.add_effects, variables, assignment)
-            del_effects = self.replace(self.del_effects, variables, assignment)
+            del_effects, _ = self.replace_effects(self.del_effects, variables, assignment)
             yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects, probs)
 
 
