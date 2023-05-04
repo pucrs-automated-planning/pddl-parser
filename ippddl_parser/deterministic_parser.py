@@ -81,10 +81,6 @@ class DeterministicParser:
                     self.parse_action(group)
                 else: self.parse_domain_extended(t, group)
             
-            if ':equality' == self.requirements:
-                # Adds equality predicate by default
-                self.predicates.append(Predicate('equal', {'?x': 'object', '?y': 'object'}))
-            
             self.action_relations = {}
             for act in self.actions:
                 self.action_relations[act.name] = act.get_related_predicates()
@@ -233,6 +229,16 @@ class DeterministicParser:
         while group:
             t = group.pop(0)
             print(str(t) + ' is not recognized in action ' + action.name)
+    
+
+    def add_objects_equality(self, group):
+        """Adds equality predicates for all objects in group and returns
+        the completed group"""
+        equality_preds = []
+        for objs in self.objects.values():
+            for obj in objs:
+                equality_preds.append(['=', obj, obj])
+        return group + equality_preds
 
 
     def parse_problem(self, problem_filename):
@@ -257,6 +263,8 @@ class DeterministicParser:
                 elif t == ':objects':
                     self.parse_objects(group, t)
                 elif t == ':init':
+                    if ':equality' in set(self.requirements):
+                        group = self.add_objects_equality(group)
                     self.state = frozenset_of_tuples(group)
                 elif t == ':goal':
                     positive_goals = []
