@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: ippddl-parser
-Version: 0.1
-Summary: Planning in Python with Imprecise Probabilities
-Home-page: https://github.com/AndreMoukarzel/ippddl-parser
-Author: André F. Moukarzel
-License: GPLv3
-License-File: LICENSE
