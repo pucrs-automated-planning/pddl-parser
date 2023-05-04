@@ -9,9 +9,9 @@ class ValueIterator:
     """Object that executes value iteration on a probabilistic planning problem
     that can be represented as an MDP.
     """
-    GAMMA: float = 0.1
+    GAMMA: float = 0.5
 
-    def solve(self, domain, problem, max_diff: float=0.05, iter_limit: int = 500):
+    def solve(self, domain, problem, max_diff: float=0.05, iter_limit: int = 1000):
         # Parser
         parser = Parser()
         parser.parse_domain(domain)
@@ -40,18 +40,19 @@ class ValueIterator:
 
             for state, state_val in state_vals.items():
                 for act in ground_actions:
-                    if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
+                    if act.is_applicable(state):
+                        """
                         if self.applicable(state, goal_pos, goal_neg):
                             # If state is a goal/terminal state, doesn't look for future states in value iteration
                             state_vals[state] = self.state_reward(state, goal_pos, goal_neg)
                             continue
+                        """
 
                         # "Future" states are the s', the states reached by applying the action to current state s 
-                        future_states = self.apply(state, act.add_effects, act.del_effects)
+                        future_states, probabilities = act.get_possible_resulting_states(state)
                         future_state_vals = []
                         for i, fut_state in enumerate(future_states):
-                            state_prob = Fraction(act.probabilities[i])
-                            fut_state_val = state_vals[fut_state] * state_prob
+                            fut_state_val = state_vals[fut_state] * probabilities[i]
                             future_state_vals.append(fut_state_val)
                         new_state_val = self.state_reward(state, goal_pos, goal_neg) + self.GAMMA * max(future_state_vals)
 
@@ -62,22 +63,8 @@ class ValueIterator:
         return state_vals
 
 
-
     def applicable(self, state, positive, negative):
         return positive.issubset(state) and negative.isdisjoint(state)
-
-
-    def apply(self, state, positive, negative) -> list:
-        """Applies all the possible positive and negative effects to a state,
-        returning a list of the possible resulting states and their probabilities.
-        """
-        resulting_states = []
-        for i in range(len(positive)):
-            pos_effects = positive[i]
-            neg_effects = negative[i]
-            new_state = state.difference(neg_effects).union(pos_effects)
-            resulting_states.append(new_state)
-        return resulting_states
     
 
     def state_reward(self, state, goal_pos, goal_neg) -> float:
@@ -96,14 +83,13 @@ class ValueIterator:
         while fringe:
             state = fringe.pop(0)
             for act in ground_actions:
-                if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
-                    possible_new_states = self.apply(state, act.add_effects, act.del_effects)
+                if act.is_applicable(state):
+                    possible_new_states, _ = act.get_possible_resulting_states(state)
                     for new_state in possible_new_states:
                         if new_state not in visited:
                             visited.add(new_state)
                             fringe.append(new_state)
         return visited
-
 
 
 if __name__ == '__main__':
@@ -115,4 +101,5 @@ if __name__ == '__main__':
     interator = ValueIterator()
     state_vals = interator.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
-    print(state_vals)
+    for state, val in state_vals.items():
+        print(f"{state}: {val}")

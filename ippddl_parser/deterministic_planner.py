@@ -32,8 +32,8 @@ class DeterministicPlanner:
             state = fringe.pop(0)
             plan = fringe.pop(0)
             for act in ground_actions:
-                if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
-                    new_state = self.apply(state, act.add_effects, act.del_effects)
+                if act.is_applicable(state):
+                    new_state = act.apply(state)
                     if new_state not in visited:
                         if self.applicable(new_state, goal_pos, goal_not):
                             full_plan = [act]
@@ -74,6 +74,6 @@ if __name__ == '__main__':
     if plan is not None:
         print('plan:')
         for act in plan:
-            print(act if verbose else act.name + ' ' + ' '.join(act.parameters))
+            print(act if verbose else f"\t{act.name} {' '.join(act.parameters)}")
     else:
         sys.exit('No plan was found')

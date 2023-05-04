@@ -1,7 +1,13 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
 
+import random
 import itertools
 from typing import List
+from fractions import Fraction
+
+
+def frozenset_of_tuples(data):
+    return frozenset([tuple(t) for t in data])
 
 
 class Action:
@@ -39,8 +45,6 @@ class Action:
             to occur. If not specified, assumes the action is deterministic and
             therefore all probabilities are 1.0
         """
-        def frozenset_of_tuples(data):
-            return frozenset([tuple(t) for t in data])
         self.name = name
         self.parameters = tuple(parameters)  # Make parameters a tuple so we can hash this if need be
         self.positive_preconditions = frozenset_of_tuples(positive_preconditions)
@@ -68,6 +72,28 @@ class Action:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+    
+
+    def replace(self, group, variables, assignment):
+        new_group = []
+        for pred in group:
+            pred = list(pred)
+            for i, p in enumerate(pred):
+                if p in variables:
+                    pred[i] = assignment[variables.index(p)]
+            new_group.append(pred)
+        return new_group
+
+
+    def replace_effects(self, effects, variables, assignment):
+        new_effects = []
+        related_probabilities = []
+        for i, eff in enumerate(effects):
+            prob = self.probabilities[i]
+            replaced_eff = self.replace(eff, variables, assignment)
+            new_effects.append(replaced_eff)
+            related_probabilities.append(prob)
+        return new_effects, related_probabilities
 
 
     def groundify(self, objects, types):
@@ -93,28 +119,49 @@ class Action:
             add_effects, probs = self.replace_effects(self.add_effects, variables, assignment)
             del_effects, _ = self.replace_effects(self.del_effects, variables, assignment)
             yield Action(self.name, assignment, positive_preconditions, negative_preconditions, add_effects, del_effects, probs)
+    
+
+    def is_applicable(self, state: frozenset):
+        """Returns if the action is applicable in the specified state.
+        
+        The state is expected to be a set of predicates."""
+        return self.positive_preconditions.issubset(state) and self.negative_preconditions.isdisjoint(state)
 
 
-    def replace(self, group, variables, assignment):
-        new_group = []
-        for pred in group:
-            pred = list(pred)
-            for i, p in enumerate(pred):
-                if p in variables:
-                    pred[i] = assignment[variables.index(p)]
-            new_group.append(pred)
-        return new_group
+    def get_possible_resulting_states(self, state: frozenset) -> list:
+        """Gets all possible resulting states of applying this action to the
+        specified state, and the probability of each occuring."""
+        if not self.is_applicable(state):
+            return [state], [1.0]
 
+        resulting_states = []
+        probabilities = []
+        for i, prob in enumerate(self.probabilities):
+            add_effects = self.add_effects[i]
+            del_effects = self.del_effects[i]
+            new_state = state.difference(del_effects).union(add_effects)
+            # Sorts propositions to avoid multiple representations of same state
+            new_state = frozenset_of_tuples(sorted(new_state))
 
-    def replace_effects(self, effects, variables, assignment):
-        new_effects = []
-        related_probabilities = []
-        for i, eff in enumerate(effects):
-            prob = self.probabilities[i]
-            replaced_eff = self.replace(eff, variables, assignment)
-            new_effects.append(replaced_eff)
-            related_probabilities.append(prob)
-        return new_effects, related_probabilities
+            resulting_states.append(new_state)
+            probabilities.append(Fraction(prob))
+        return resulting_states, probabilities
+    
+
+    def apply(self, state: frozenset) -> frozenset:
+        """Applies the Action to the specified state, if applicable"""
+        if not self.is_applicable(state):
+            return state
+        possible_states, probs = self.get_possible_resulting_states(state)
+        randf: float = random.uniform(0.0, 1.0)
+
+        # Sorts possible states from lowest to highest probability
+        states_and_probs = [(poss_state, prob) for poss_state, prob in sorted(zip(possible_states, probs), key=lambda pair: pair[0])]
+        for poss_state, prob in states_and_probs:
+            if randf <= prob:
+                return poss_state
+        return state
+
     
 
     def get_related_predicates(self) -> set:
