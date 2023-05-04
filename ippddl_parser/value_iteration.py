@@ -41,6 +41,11 @@ class ValueIterator:
             for state, state_val in state_vals.items():
                 for act in ground_actions:
                     if self.applicable(state, act.positive_preconditions, act.negative_preconditions):
+                        if self.applicable(state, goal_pos, goal_neg):
+                            # If state is a goal/terminal state, doesn't look for future states in value iteration
+                            state_vals[state] = self.state_reward(state, goal_pos, goal_neg)
+                            continue
+
                         # "Future" states are the s', the states reached by applying the action to current state s 
                         future_states = self.apply(state, act.add_effects, act.del_effects)
                         future_state_vals = []
