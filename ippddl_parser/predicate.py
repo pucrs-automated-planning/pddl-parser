@@ -2,11 +2,11 @@
 
 class Predicate:
 
-    def __init__(self, name, arguments):
+    def __init__(self, name: str, arguments: dict):
         self.name = name
         self.arguments = tuple(arguments)  # Make parameters a tuple so we can hash this if need be
         self.objects = frozenset([key for key in arguments.keys()])
-        self.object_types = frozenset([val for val in arguments.values()])
+        self.object_types = [val for val in arguments.values()]
 
 
     def __str__(self):
@@ -17,3 +17,10 @@ class Predicate:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+
+
+if __name__ == '__main__':
+    pred = Predicate('at', {'?ag': 'agent', '?x': 'location'})
+    print(pred)
+    pred = Predicate('on', {'?x': 'block', '?y': 'block'})
+    print(pred)
