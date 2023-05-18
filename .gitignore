@@ -1,2 +1,4 @@
 **/__pycache__/
 **.pyc
+.vscode
+ippddl_parser.egg-info

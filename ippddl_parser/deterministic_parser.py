@@ -80,18 +80,6 @@ class DeterministicParser:
                 elif t == ':action':
                     self.parse_action(group)
                 else: self.parse_domain_extended(t, group)
-            
-            self.action_relations = {}
-            for act in self.actions:
-                self.action_relations[act.name] = act.get_related_predicates()
-            
-            self.predicate_relations = {}
-            for predicate in self.predicates:
-                related_actions = []
-                for action, related_predicates in self.action_relations.items():
-                    if predicate.name in related_predicates:
-                        related_actions.append(action)
-                self.predicate_relations[predicate.name] = set(related_actions)
         else:
             raise Exception('File ' + domain_filename + ' does not match domain pattern')
 
@@ -237,7 +225,7 @@ class DeterministicParser:
         equality_preds = []
         for objs in self.objects.values():
             for obj in objs:
-                equality_preds.append(['=', obj, obj])
+                equality_preds.append(['equal', obj, obj])
         return group + equality_preds
 
 

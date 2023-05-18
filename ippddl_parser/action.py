@@ -162,22 +162,6 @@ class Action:
                 return poss_state
         return state
 
-    
-
-    def get_related_predicates(self) -> set:
-        all_predicates = []
-        for pred in self.positive_preconditions:
-            all_predicates.append(pred[0])
-        for pred in self.negative_preconditions:
-            all_predicates.append(pred[0])
-        for prop_effect in self.add_effects:
-            for pred in prop_effect:
-                all_predicates.append(pred[0])
-        for prop_effect in self.del_effects:
-            for pred in prop_effect:
-                all_predicates.append(pred[0])
-        return set(all_predicates)
-
 
 
 if __name__ == '__main__':
