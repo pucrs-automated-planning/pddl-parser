@@ -1,6 +1,5 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
-from typing import Dict
-from fractions import Fraction
+from typing import Dict, List
 
 from .parser import Parser
 
@@ -39,25 +38,29 @@ class ValueIterator:
             max_iter_diff = 0.0
 
             for state, state_val in state_vals.items():
+                # Don't look at future states if current state is already a goal
+                if self.state_reward(state, goal_pos, goal_neg):
+                    new_state_val = self.state_reward(state, goal_pos, goal_neg)
+                    max_iter_diff = max(max_iter_diff, abs(new_state_val - state_vals[state]))
+                    state_vals[state] = new_state_val
+                    continue
+
+                q_values: List[float] = []
                 for act in ground_actions:
                     if act.is_applicable(state):
-                        """
-                        if self.applicable(state, goal_pos, goal_neg):
-                            # If state is a goal/terminal state, doesn't look for future states in value iteration
-                            state_vals[state] = self.state_reward(state, goal_pos, goal_neg)
-                            continue
-                        """
-
                         # "Future" states are the s', the states reached by applying the action to current state s 
                         future_states, probabilities = act.get_possible_resulting_states(state)
-                        future_state_vals = []
+                        future_state_vals: List[float] = []
                         for i, fut_state in enumerate(future_states):
                             fut_state_val = state_vals[fut_state] * probabilities[i]
-                            future_state_vals.append(fut_state_val)
-                        new_state_val = self.state_reward(state, goal_pos, goal_neg) + self.GAMMA * max(future_state_vals)
-
-                        max_iter_diff = max(max_iter_diff, abs(new_state_val - state_val))
-                        state_vals[state] = new_state_val
+                            future_state_vals.append(fut_state_val) #+ self.state_reward(fut_state, goal_pos, goal_neg))
+                        q_val = sum(future_state_vals)
+                        q_values.append(q_val)
+                
+                if len(q_values) > 0:
+                    new_state_val = self.state_reward(state, goal_pos, goal_neg) + self.GAMMA * max(q_values)
+                    max_iter_diff = max(max_iter_diff, abs(new_state_val - state_val))
+                    state_vals[state] = new_state_val
             iter_num += 1
         
         return state_vals
@@ -97,7 +100,6 @@ if __name__ == '__main__':
     start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
-    verbose = len(sys.argv) > 3 and sys.argv[3] == '-v'
     interator = ValueIterator()
     state_vals = interator.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')

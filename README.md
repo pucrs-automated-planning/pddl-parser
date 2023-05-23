@@ -159,6 +159,31 @@ action: carry
 ```
 </details>
 
+
+In the same way, value iteration can also be executed with probabilistic problems. It will output the values of each
+state in a problem.
+
+For more fine control over value iteration, such as the stopping conditions and dealing with reward values, using the
+API directly is recommended.
+
+```Shell
+cd ippddl-parser
+python -B -m ippddl_parser.value_iteration examples/blocksworld/blocksworld.pddl examples/blocksworld/pb1.pddl -v
+```
+
+<details><summary>Value Iteration output</summary>
+
+```Shell
+Time: 0.0009970664978027344s
+frozenset({('holding', 'b'), ('equal', 'b', 'b'), ('clear', 'a'), ('equal', 'a', 'a'), ('ontable', 'a')}): 0.125
+frozenset({('ontable', 'b'), ('equal', 'b', 'b'), ('clear', 'a'), ('equal', 'a', 'a'), ('clear', 'b'), ('ontable', 'a')}): 0.25
+frozenset({('ontable', 'b'), ('equal', 'b', 'b'), ('clear', 'a'), ('on', 'a', 'b'), ('equal', 'a', 'a')}): 1.0
+frozenset({('holding', 'a'), ('ontable', 'b'), ('equal', 'b', 'b'), ('equal', 'a', 'a'), ('clear', 'b')}): 0.5
+frozenset({('holding', 'a'), ('equal', 'b', 'b'), ('equal', 'a', 'a'), ('holding', 'b')}): 0.25
+frozenset({('equal', 'b', 'b'), ('on', 'b', 'a'), ('equal', 'a', 'a'), ('clear', 'b'), ('ontable', 'a')}): 0.0625
+```
+</details>
+
 ## Extensions
 New parser features should be added through inheritance using ``super()`` and ``parse_*_extended`` methods.
 The Action class may also require modifications to deal with possible extensions.
