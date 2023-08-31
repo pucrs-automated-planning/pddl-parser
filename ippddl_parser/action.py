@@ -171,7 +171,6 @@ if __name__ == '__main__':
                        [[['at', '?ag', '?to']]],
                        [[['at', '?ag', '?from']]])
     print(a)
-    print("Related predicates: ", a.get_related_predicates())
 
     print("\n\n---------- Groundified ----------\n")
     objects = {

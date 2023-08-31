@@ -100,8 +100,8 @@ if __name__ == '__main__':
     start_time = time.time()
     domain = sys.argv[1]
     problem = sys.argv[2]
-    interator = ValueIterator()
-    state_vals = interator.solve(domain, problem)
+    iterator = ValueIterator()
+    state_vals = iterator.solve(domain, problem)
     print('Time: ' + str(time.time() - start_time) + 's')
     for state, val in state_vals.items():
         print(f"{state}: {val}")
