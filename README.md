@@ -33,6 +33,19 @@ cd ippddl-parser
 pip install -e .
 ```
 
+## Important Warning
+
+When working with imprecise probability intervals in the IPPDDL language, actions will "settle" the probabilities of
+each effect occurring into real probability values contained within the specified intervals.
+
+**It is required to be possible for the sum of those values to be a value of 100% or lower.**
+
+In other words, you may not set imprecise possibilities in a way that more then one effect will take place simultaneously.
+
+Therefore you may not, as an example, create an action with possible effects *e1* and *e2* where their imprecise
+probability intervals are defined as being (3/4, 1) for both effects. In this case, the sum of the settled probabilities
+would be, at minimun, 3/4 + 3/4 = 6/4 = 150%, which violates the condition determined above.
+
 ## Execution
 The parsers can be executed without planning, it outputs elements found in the input files and the structures created.
 

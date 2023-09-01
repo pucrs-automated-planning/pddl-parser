@@ -152,11 +152,16 @@ class Action:
         imprecise_sum: float = 999.9 # Used to make sure the sum of probabilities does not go over 100%
         while imprecise_sum + precise_sum > 1.0:
             imprecise_sum = 0.0
+            min_probs_sum: float = 0.0
             for i, prob in enumerate(self.raw_probabilities):
                 if isinstance(prob, tuple):
                     settled_prob: float = random.uniform(prob[0], prob[1])
                     self.probabilities[i] = Fraction(settled_prob)
+                    min_probs_sum += float(prob[0])
                     imprecise_sum += settled_prob
+                
+                if min_probs_sum > 1.0:
+                    raise ValueError(f"Error in Action {self.name}: The sum of minimum values in all imprecise probability intervals must not add upt to more than 100%!")
 
 
     def get_possible_resulting_states(self, state: frozenset) -> list:
@@ -168,9 +173,6 @@ class Action:
         resulting_states = []
         probabilities = []
         for i, prob in enumerate(self.probabilities):
-            if isinstance(prob, tuple):
-                print(";LDKASJF;ALSKJDF;ALKDJF")
-
             add_effects = self.add_effects[i]
             del_effects = self.del_effects[i]
             new_state = state.difference(del_effects).union(add_effects)
