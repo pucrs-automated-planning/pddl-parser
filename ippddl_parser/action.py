@@ -51,11 +51,14 @@ class Action:
         self.negative_preconditions = frozenset_of_tuples(negative_preconditions)
         self.add_effects = [frozenset_of_tuples(add_effs) for add_effs in add_effects]
         self.del_effects = [frozenset_of_tuples(del_effs) for del_effs in del_effects]
+        self.raw_probabilities = probabilities
         self.probabilities = probabilities
         if len(probabilities) == 0: # If no probability is specified, assumes action is deterministic
             # Sets all effects to have 100% chance of occuring.
             self.probabilities = [1.0 for _ in add_effects]
-
+        else:
+            # For imprecise probabilities, given as an interval of values, settles them into a usable probability
+            self.settle_imprecise_probabilities()
 
 
     def __str__(self):
@@ -64,9 +67,10 @@ class Action:
             '\n  positive_preconditions: ' + str([list(i) for i in self.positive_preconditions]) + \
             '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
             '\n  effects:'
-        for i, prob in enumerate(self.probabilities):
+        for i, prob in enumerate(self.raw_probabilities):
             if isinstance(prob, tuple):
-                return_str += f"\n\t({', '.join([str(val) for val in prob])})"
+                settled_prob = float(self.probabilities[i])
+                return_str += f"\n\t({', '.join([str(val) for val in prob])}) | Current Value: {round(settled_prob, 2)}"
             else:
                 return_str += f'\n\t{prob}'
             
@@ -134,8 +138,25 @@ class Action:
 
 
     def settle_imprecise_probabilities(self):
-        """Settles imprecise probabilities 
+        """Settles imprecise probabilities into a valid value contained into the
+        specified intervals. Can be re-used to change the settled probabilities.
         """
+        precise_sum: float = 0.0 
+        self.probabilities = [0.0] * len(self.raw_probabilities)
+        for i, prob in enumerate(self.raw_probabilities):
+            # Precise probabilities do not need to be settled, so they are resolved first
+            if not isinstance(prob, tuple): 
+                self.probabilities[i] = prob
+                precise_sum += prob
+        
+        imprecise_sum: float = 999.9 # Used to make sure the sum of probabilities does not go over 100%
+        while imprecise_sum + precise_sum > 1.0:
+            imprecise_sum = 0.0
+            for i, prob in enumerate(self.raw_probabilities):
+                if isinstance(prob, tuple):
+                    settled_prob: float = random.uniform(prob[0], prob[1])
+                    self.probabilities[i] = Fraction(settled_prob)
+                    imprecise_sum += settled_prob
 
 
     def get_possible_resulting_states(self, state: frozenset) -> list:
