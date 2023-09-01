@@ -22,7 +22,7 @@ class Action:
             negative_preconditions,
             add_effects,
             del_effects,
-            probabilities: List[float]=[]
+            probabilities: List[Fraction]=[]
         ) -> None:
         """Instantiates an Action
 
@@ -40,7 +40,7 @@ class Action:
 
         del_effects
 
-        probabilities: List[float], optional
+        probabilities: List[Fraction], optional
             Probability of each of the listed add_effects and del_effects pairs
             to occur. If not specified, assumes the action is deterministic and
             therefore all probabilities are 1.0
@@ -52,9 +52,10 @@ class Action:
         self.add_effects = [frozenset_of_tuples(add_effs) for add_effs in add_effects]
         self.del_effects = [frozenset_of_tuples(del_effs) for del_effs in del_effects]
         self.probabilities = probabilities
-        if len(probabilities) == 0:
-            # Assumes action is deterministic and set all effects to have 100% chance of occuring.
+        if len(probabilities) == 0: # If no probability is specified, assumes action is deterministic
+            # Sets all effects to have 100% chance of occuring.
             self.probabilities = [1.0 for _ in add_effects]
+
 
 
     def __str__(self):
@@ -64,9 +65,13 @@ class Action:
             '\n  negative_preconditions: ' + str([list(i) for i in self.negative_preconditions]) + \
             '\n  effects:'
         for i, prob in enumerate(self.probabilities):
-            return_str += f'\n\t{prob}' + \
-                f'\n\t  positive effects: {str([list(eff) for eff in self.add_effects[i]])}' + \
-                f'\n\t  negative effects: {str([list(eff) for eff in self.del_effects[i]])}'
+            if isinstance(prob, tuple):
+                return_str += f"\n\t({', '.join([str(val) for val in prob])})"
+            else:
+                return_str += f'\n\t{prob}'
+            
+            return_str += f'\n\t  positive effects: {str([list(eff) for eff in self.add_effects[i]])}' + \
+                          f'\n\t  negative effects: {str([list(eff) for eff in self.del_effects[i]])}'
         return return_str + '\n'
 
 
@@ -128,6 +133,11 @@ class Action:
         return self.positive_preconditions.issubset(state) and self.negative_preconditions.isdisjoint(state)
 
 
+    def settle_imprecise_probabilities(self):
+        """Settles imprecise probabilities 
+        """
+
+
     def get_possible_resulting_states(self, state: frozenset) -> list:
         """Gets all possible resulting states of applying this action to the
         specified state, and the probability of each occuring."""
@@ -137,6 +147,9 @@ class Action:
         resulting_states = []
         probabilities = []
         for i, prob in enumerate(self.probabilities):
+            if isinstance(prob, tuple):
+                print(";LDKASJF;ALSKJDF;ALKDJF")
+
             add_effects = self.add_effects[i]
             del_effects = self.del_effects[i]
             new_state = state.difference(del_effects).union(add_effects)
@@ -144,7 +157,7 @@ class Action:
             new_state = frozenset_of_tuples(sorted(new_state))
 
             resulting_states.append(new_state)
-            probabilities.append(Fraction(prob))
+            probabilities.append(prob)
         return resulting_states, probabilities
     
 

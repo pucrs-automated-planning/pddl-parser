@@ -1,4 +1,5 @@
 # This file is part of IPPDDL Parser, available at <https://github.com/AndreMoukarzel/ippddl-parser/>.
+from fractions import Fraction
 
 from .deterministic_parser import DeterministicParser
 from .action import Action
@@ -7,7 +8,7 @@ from .action import Action
 class Parser(DeterministicParser):
     
     SUPPORTED_REQUIREMENTS = DeterministicParser.SUPPORTED_REQUIREMENTS + [
-        ':probabilistic-effects', ':conditional-effects', ':rewards'
+        ':probabilistic-effects', ':conditional-effects', ':rewards', ':imprecise'
     ]
 
 
@@ -21,7 +22,7 @@ class Parser(DeterministicParser):
         probabilities = []
 
         for i in range(0, len(probabilistic_effects), 2):
-            prob = probabilistic_effects[i]
+            prob = Fraction(probabilistic_effects[i]) # Converts string to Fraction
             this_effects = probabilistic_effects[i + 1]
             this_add_effects = []
             this_del_effects = []
@@ -32,14 +33,44 @@ class Parser(DeterministicParser):
             probabilities.append(prob)
         
         return add_effects, del_effects, probabilities
+    
+
+    def parse_imprecise_effect(self, probabilistic_effects, action_name):
+        add_effects = []
+        del_effects = []
+        probabilities = []
+
+        for i in range(0, len(probabilistic_effects), 2):
+            prob = [Fraction(val) for val in probabilistic_effects[i]] # Treats the received range of probabilities
+            prob.sort()
+            this_effects = probabilistic_effects[i + 1]
+            this_add_effects = []
+            this_del_effects = []
+            self.split_predicates(this_effects, this_add_effects, this_del_effects, action_name, ' effects')
+
+            add_effects.append(this_add_effects)
+            del_effects.append(this_del_effects)
+            probabilities.append(tuple(prob))
+        
+        return add_effects, del_effects, probabilities
 
 
-    def parse_action_effects(self, effects, action_name):
+    def parse_action_effects(self, effects: list, action_name: str):
         """Parses the effects of an action.
 
-        The base parser is used in deterministic problems, and therefore all
-        actions are assumed to have only one possible outcome with add and del
-        effects
+        The base parser is used in deterministic problems, which are treated as
+        a probabilistic problem where all probabilities are 100%.
+
+        Parameters
+        ----------
+        effects: list
+            An action's effects. List with all strings found in an action
+            separated by commas.
+        action_name: str
+            Action's name.
+        
+        Returns
+        -------
         """
         add_effects = []
         del_effects = []
@@ -48,6 +79,9 @@ class Parser(DeterministicParser):
         if effects[0] == 'probabilistic':
             prob_effects = effects[1:]
             add_effects, del_effects, probabilities = self.parse_probabilistic_effect(prob_effects, action_name)
+        elif effects[0] == 'imprecise':
+            prob_effects = effects[1:]
+            add_effects, del_effects, probabilities = self.parse_imprecise_effect(prob_effects, action_name)
         else:
             # When the action is deterministic, we hardset its probability of happening to 100%
             self.split_predicates(effects, add_effects, del_effects, action_name, ' effects')
