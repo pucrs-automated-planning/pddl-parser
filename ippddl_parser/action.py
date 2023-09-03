@@ -55,10 +55,9 @@ class Action:
         self.probabilities = probabilities
         if len(probabilities) == 0: # If no probability is specified, assumes action is deterministic
             # Sets all effects to have 100% chance of occuring.
-            self.probabilities = [1.0 for _ in add_effects]
-        else:
-            # For imprecise probabilities, given as an interval of values, settles them into a usable probability
-            self.settle_imprecise_probabilities()
+            self.raw_probabilities = [1.0 for _ in add_effects]
+        # For imprecise probabilities, given as an interval of values, settles them into a usable probability
+        self.settle_imprecise_probabilities()
 
 
     def __str__(self):
@@ -80,7 +79,13 @@ class Action:
 
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        if self.name == other.name and self.parameters == other.parameters \
+            and self.positive_preconditions == other.positive_preconditions \
+            and self.negative_preconditions == other.negative_preconditions \
+            and self.add_effects == other.add_effects and self.del_effects == other.del_effects \
+            and self.raw_probabilities == other.raw_probabilities:
+            return True
+        return False
     
 
     def replace(self, group, variables, assignment):

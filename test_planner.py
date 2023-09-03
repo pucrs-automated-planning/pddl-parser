@@ -10,9 +10,9 @@ class TestPlanner(unittest.TestCase):
         planner = DeterministicPlanner()
         self.assertEqual(planner.solve('examples/dinner/dinner.pddl', 'examples/dinner/pb1.pddl'),
             [
-                Action('cook', [], [['clean']], [], [[['dinner']]], [[]], [1]),
-                Action('wrap', [], [['quiet']], [], [[['present']]], [[]], [1]),
-                Action('carry', [], [['garbage']], [], [[]], [[['garbage'], ['clean']]], [1])
+                Action('cook', [], [['clean']], [], [[['dinner']]], [[]], []),
+                Action('wrap', [], [['quiet']], [], [[['present']]], [[]], []),
+                Action('carry', [], [['garbage']], [], [[]], [[['garbage'], ['clean']]], [])
             ]
         )
 

@@ -36,6 +36,7 @@ class DeterministicPlanner:
                     new_state = act.apply(state)
                     if new_state not in visited:
                         if self.applicable(new_state, goal_pos, goal_not):
+                            print("found goal")
                             full_plan = [act]
                             while plan:
                                 act, plan = plan
@@ -49,16 +50,6 @@ class DeterministicPlanner:
 
     def applicable(self, state, positive, negative):
         return positive.issubset(state) and negative.isdisjoint(state)
-
-
-    def apply(self, state, positive, negative):
-        """Applies the positive and negative effects to a state.
-
-        Since we only deal with deterministic problems here, we know the effects
-        will only have one element, representing the deterministic effects that
-        will happen with 100% probability.
-        """
-        return state.difference(negative[0]).union(positive[0])
 
 
 
